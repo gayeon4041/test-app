@@ -28,7 +28,7 @@ export const queries = [
 export const mutations = [
   /* GraphQL */ `
   createOrUpdateEmployee(employee: EmployeeInput): Employee
-  deleteEmployee(id: String): Employee
+  deleteEmployee(ids: [String]): [Employee]
 `
 ]
 

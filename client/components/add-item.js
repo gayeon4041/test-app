@@ -18,6 +18,8 @@ export class AddItem extends LitElement {
 
       .create-button {
         margin-top: 10px;
+        border: 0;
+        outline: 0;
       }
     `
   }
@@ -51,7 +53,7 @@ export class AddItem extends LitElement {
 
   async addFunction(e) {
     e.preventDefault()
-    debugger
+
     const form = this.renderRoot.querySelector('#add-form')
 
     const formData = new FormData(form)

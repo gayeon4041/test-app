@@ -1,11 +1,12 @@
-import { html, css } from 'lit-element'
-import { connect } from 'pwa-helpers/connect-mixin.js'
-import { store, PageView, client } from '@things-factory/shell'
-import gql from 'graphql-tag'
-
 import '../components/test-app-title'
 import '../components/add-item'
 import '../components/editable-list-item'
+
+import { PageView, client, store } from '@things-factory/shell'
+import { css, html } from 'lit-element'
+
+import { connect } from 'pwa-helpers/connect-mixin.js'
+import gql from 'graphql-tag'
 
 class TestAppMain extends connect(store)(PageView) {
   static get styles() {
@@ -34,15 +35,26 @@ class TestAppMain extends connect(store)(PageView) {
         padding: 20px;
       }
 
+      li {
+        margin-bottom: 10px;
+      }
+
       add-item {
         flex: 1;
+      }
+
+      button {
+        border: 0;
+        outline: 0;
+        border-radius: 5px;
       }
     `
   }
 
   static get properties() {
     return {
-      employees: Array
+      employees: Array,
+      selectMode: Boolean
     }
   }
 
@@ -85,6 +97,7 @@ class TestAppMain extends connect(store)(PageView) {
     return html`
       <section>
         <test-app-title title="HatioLab Employees"></test-app-title>
+        <button @click=${this.selectToggle}>Select</button>
         <ul>
           ${this.employees.map(
             (e, i) => html`
@@ -110,14 +123,16 @@ class TestAppMain extends connect(store)(PageView) {
                     const deletedEmployeeName = await this.deleteEmployee(id)
                     await this.refresh()
                     await this.updateComplete
-                    console.log(deletedEmployeeName + '이 지워졌습니다.')
+                    console.log(deletedEmployeeName[0].name + '님이 삭제되었습니다.')
                   }}
+                  .selectMode=${this.selectMode}
                 >
                 </editable-list-item>
               </li>
             `
           )}
         </ul>
+        <button @click=${this.deleteList}>delete</button>
         <add-item
           .fields=${fieldOptions}
           .addEmployee=${async addObj => {
@@ -141,6 +156,34 @@ class TestAppMain extends connect(store)(PageView) {
     super()
 
     this.employees = []
+    this.selectMode = false
+  }
+
+  //selectBtn
+  selectToggle() {
+    this.selectMode = !this.selectMode
+    console.log(this.selectMode)
+  }
+
+  //체크된 직원 지우기
+  async deleteList() {
+    const checkedList = this.getCheckedList()
+    let idList = []
+    checkedList.forEach((checkedItem, i) => idList.push(checkedItem.item.id))
+    let deletedIdArray = await this.deleteEmployee(idList)
+
+    // 완료후 작업
+    deletedIdArray.forEach((id, i) => console.log(id.name + '님이 삭제되었습니다.'))
+
+    await this.refresh()
+  }
+
+  //체크된 리스트 뽑아서 배열로 return
+  getCheckedList() {
+    const listItems = Array.from(this.renderRoot.querySelectorAll('editable-list-item'))
+    const checked = listItems.filter((item, index) => item.isSelected)
+
+    return checked
   }
 
   //초기설정 (litElement lifecycle)
@@ -177,6 +220,7 @@ class TestAppMain extends connect(store)(PageView) {
         }
       `,
       variables: {
+        //newEmployee: newEmployee
         newEmployee
       }
     })
@@ -184,21 +228,21 @@ class TestAppMain extends connect(store)(PageView) {
     return response.data.createOrUpdateEmployee
   }
 
-  async deleteEmployee(id) {
+  async deleteEmployee(ids) {
     const response = await client.mutate({
       mutation: gql`
-        mutation deleteEmployee($id: String) {
-          deleteEmployee(id: $id) {
+        mutation deleteEmployee($ids: [String]) {
+          deleteEmployee(ids: $ids) {
             name
           }
         }
       `,
       variables: {
-        id
+        ids
       }
     })
 
-    return response.data.deleteEmployee.name
+    return response.data.deleteEmployee
   }
 
   stateChanged(state) {

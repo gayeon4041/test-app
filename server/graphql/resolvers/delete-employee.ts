@@ -1,9 +1,9 @@
 import { Employee } from '../../entities'
 
 export const deleteEmployeeResolver = {
-  async deleteEmployee(_: any, { id }: { id: string }) {
-    let employee: Employee = await Employee.findOne(id)
+  async deleteEmployee(_: any, { ids }: { ids: string[] }) {
+    let employees: Employee[] = await Employee.findByIds(ids)
 
-    return await employee.remove()
+    return await Employee.remove(employees)
   }
 }

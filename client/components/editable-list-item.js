@@ -1,4 +1,4 @@
-import { LitElement, html, css } from 'lit-element'
+import { LitElement, css, html } from 'lit-element'
 
 export class EditableListItem extends LitElement {
   static get styles() {
@@ -10,7 +10,13 @@ export class EditableListItem extends LitElement {
 
       :host > div {
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr auto;
+        grid-template-columns: auto 1fr 1fr 1fr auto;
+      }
+
+      button {
+        border: 0;
+        outline: 0;
+        border-radius: 8px;
       }
 
       .listName {
@@ -19,7 +25,11 @@ export class EditableListItem extends LitElement {
 
       #editForm {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(4, 1fr);
+      }
+
+      .listValue {
+        margin-right: 10px;
       }
     `
   }
@@ -30,7 +40,9 @@ export class EditableListItem extends LitElement {
       fields: Array,
       isEditing: Boolean,
       updateFunction: Function,
-      deleteFunction: Function
+      deleteFunction: Function,
+      isSelected: Boolean,
+      selectMode: Boolean
     }
   }
 
@@ -49,11 +61,12 @@ export class EditableListItem extends LitElement {
 
     //기본모드
     const baseTemplate = html` <div>
+      <input type="checkbox" @change=${this.selectedEvent} .checked=${this.isSelected} .hidden=${!this.selectMode} />
       ${this.fields.map(
         f =>
           html`
             ${f.display.editing
-              ? html`<span><span class="listName">${f.name}:</span> ${this.item[f.name]}</span>`
+              ? html`<span class="listValue"><span class="listName">${f.name}:</span> ${this.item[f.name]}</span>`
               : html``}
           `
       )}
@@ -68,6 +81,11 @@ export class EditableListItem extends LitElement {
     super()
 
     this.fields = []
+    this.isSelected = false
+  }
+
+  selectedEvent(e) {
+    this.isSelected = e.currentTarget.checked
   }
 
   toggleEditMode() {
@@ -107,7 +125,6 @@ export class EditableListItem extends LitElement {
   serialize() {
     const form = this.renderRoot.querySelector('#editForm')
     const formData = new FormData(form)
-    //Object.entries() : for...in과 같은 순서로 [key, value]쌍 반환
     const updateObj = Object.fromEntries(formData.entries())
 
     return updateObj
