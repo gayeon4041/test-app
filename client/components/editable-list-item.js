@@ -17,6 +17,7 @@ export class EditableListItem extends LitElement {
         border: 0;
         outline: 0;
         border-radius: 8px;
+        margin-right: 5px;
       }
 
       .submitBtn {
@@ -32,7 +33,7 @@ export class EditableListItem extends LitElement {
 
       #editForm {
         display: grid;
-        grid-template-columns: 2fr 2fr 2fr 1fr 1fr 1fr;
+        grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
       }
 
       #editForm input {

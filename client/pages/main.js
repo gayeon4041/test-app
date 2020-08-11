@@ -141,7 +141,7 @@ class TestAppMain extends connect(store)(PageView) {
                     }
 
                     const updatedEmployee = await this.createOrUpdateEmployee(parsedNewEmployeeObj)
-
+                    this.updateSnackbar()
                     this.refresh()
                   }}
                   .deleteFunction=${async deleteObj => {
@@ -150,6 +150,7 @@ class TestAppMain extends connect(store)(PageView) {
                     await this.refresh()
                     await this.updateComplete
                     console.log(deletedEmployeeName[0].name + '님이 삭제되었습니다.')
+                    this.deleteSnackbar()
                   }}
                   .selectMode=${this.selectMode}
                   .selectAllMode=${this.selectAllMode}
@@ -185,6 +186,24 @@ class TestAppMain extends connect(store)(PageView) {
     this.employees = []
     this.selectMode = false
     this.selectAllMode = true
+  }
+
+  deleteSnackbar() {
+    store.dispatch(
+      showSnackbar('info', {
+        message: `삭제되었습니다.`,
+        timer: 5000
+      })
+    )
+  }
+
+  updateSnackbar() {
+    store.dispatch(
+      showSnackbar('info', {
+        message: `수정되었습니다.`,
+        timer: 5000
+      })
+    )
   }
 
   //전체선택 취소

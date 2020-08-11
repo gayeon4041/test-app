@@ -56,7 +56,6 @@ export class AddItem extends LitElement {
               ? html` <label>${f.name}: <input type=${f.type} name=${f.name} /> </label>`
               : html``}`
         )}
-
         <input class="create-button" type="submit" value="create" />
       </form>
     `
