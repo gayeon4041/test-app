@@ -10,7 +10,7 @@ export class EditableListItem extends LitElement {
 
       :host > div {
         display: grid;
-        grid-template-columns: auto 1fr 1fr 1fr auto;
+        grid-template-columns: auto 1fr 2fr 1fr;
       }
 
       button {
@@ -19,13 +19,24 @@ export class EditableListItem extends LitElement {
         border-radius: 8px;
       }
 
+      .submitBtn {
+        border: 0;
+        outline: 0;
+        border-radius: 8px;
+      }
+
       .listName {
-        color: gray;
+        color: #ef5956;
+        font-weight: 700;
       }
 
       #editForm {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: 2fr 2fr 2fr 1fr 1fr 1fr;
+      }
+
+      #editForm input {
+        margin-right: 5px;
       }
 
       .listValue {
@@ -42,7 +53,8 @@ export class EditableListItem extends LitElement {
       updateFunction: Function,
       deleteFunction: Function,
       isSelected: Boolean,
-      selectMode: Boolean
+      selectMode: Boolean,
+      selectAllMode: Boolean
     }
   }
 
@@ -53,7 +65,7 @@ export class EditableListItem extends LitElement {
         ${this.fields.map(
           f => html` <input type=${f.type} name=${f.name} .value=${this.item[f.name]} .hidden=${!f.display.editing} /> `
         )}
-        <input type="submit" value="save" />
+        <input class="submitBtn" type="submit" value="save" />
         <button @click=${this.toggleEditMode}>cancel</button>
         <button @click=${this.deleteItem}>delete</button>
       </form>
@@ -61,7 +73,9 @@ export class EditableListItem extends LitElement {
 
     //기본모드
     const baseTemplate = html` <div>
-      <input type="checkbox" @change=${this.selectedEvent} .checked=${this.isSelected} .hidden=${!this.selectMode} />
+      ${this.selectMode
+        ? html`<input type="checkbox" @change=${this.selectedEvent} .checked=${this.isSelected} />`
+        : html``}
       ${this.fields.map(
         f =>
           html`
@@ -70,7 +84,9 @@ export class EditableListItem extends LitElement {
               : html``}
           `
       )}
-      <button @click=${this.toggleEditMode}>edit</button>
+      <button id="edit-btn" @click=${this.toggleEditMode} .hidden=${this.selectMode}>
+        edit
+      </button>
     </div>`
 
     const template = this.isEditing ? editingTemplate : baseTemplate
@@ -84,12 +100,28 @@ export class EditableListItem extends LitElement {
     this.isSelected = false
   }
 
+  updated(changed) {
+    if (changed.has('selectMode') && !this.selectMode) {
+      this.clearAll()
+    }
+    if (changed.has('selectAllMode') && !this.selectAllMode) {
+      this.isSelected = true
+    } else if (changed.has('selectAllMode') && this.selectAllMode) {
+      this.clearAll()
+    }
+  }
+
+  clearAll() {
+    this.isSelected = false
+  }
+
   selectedEvent(e) {
     this.isSelected = e.currentTarget.checked
   }
 
-  toggleEditMode() {
+  toggleEditMode(e) {
     this.isEditing = !this.isEditing
+    console.log(this.isEditing)
   }
 
   //삭제

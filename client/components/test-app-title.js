@@ -4,7 +4,7 @@ export class TestAppTitle extends LitElement {
   static get styles() {
     return css`
       h2 {
-        color: gray;
+        color: #ef5956;
       }
     `
   }

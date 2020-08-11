@@ -8,6 +8,8 @@ import { css, html } from 'lit-element'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import gql from 'graphql-tag'
 
+import { showSnackbar } from '@things-factory/layout-base'
+
 class TestAppMain extends connect(store)(PageView) {
   static get styles() {
     return css`
@@ -29,7 +31,7 @@ class TestAppMain extends connect(store)(PageView) {
         overflow: auto;
         flex: 0.5;
         margin: auto;
-        border: 1px solid;
+        border: 1px solid #ed6856;
         border-radius: 8px;
         margin: 20px;
         padding: 20px;
@@ -47,6 +49,19 @@ class TestAppMain extends connect(store)(PageView) {
         border: 0;
         outline: 0;
         border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #ef5956;
+        color: #ffffff;
+        font-weight: 700;
+      }
+
+      .select-btns {
+        display: flex;
+      }
+
+      .select-btns button:first-child {
+        margin-right: 20px;
       }
     `
   }
@@ -54,7 +69,8 @@ class TestAppMain extends connect(store)(PageView) {
   static get properties() {
     return {
       employees: Array,
-      selectMode: Boolean
+      selectMode: Boolean,
+      selectAllMode: Boolean
     }
   }
 
@@ -97,7 +113,17 @@ class TestAppMain extends connect(store)(PageView) {
     return html`
       <section>
         <test-app-title title="HatioLab Employees"></test-app-title>
-        <button @click=${this.selectToggle}>Select</button>
+        <div class="select-btns">
+          ${this.selectMode
+            ? html`${this.selectAllMode
+                  ? html`<button @click=${this.selectAllList}>select all</button>`
+                  : html`<button @click=${this.cancelSelectAllList}>select cancel</button>`}<button
+                  @click=${this.exitSelectMode}
+                >
+                  cancel
+                </button>`
+            : html`<button @click=${this.enterSelectMode}>select</button>`}
+        </div>
         <ul>
           ${this.employees.map(
             (e, i) => html`
@@ -126,6 +152,7 @@ class TestAppMain extends connect(store)(PageView) {
                     console.log(deletedEmployeeName[0].name + '님이 삭제되었습니다.')
                   }}
                   .selectMode=${this.selectMode}
+                  .selectAllMode=${this.selectAllMode}
                 >
                 </editable-list-item>
               </li>
@@ -157,12 +184,40 @@ class TestAppMain extends connect(store)(PageView) {
 
     this.employees = []
     this.selectMode = false
+    this.selectAllMode = true
+  }
+
+  //전체선택 취소
+  cancelSelectAllList() {
+    this.selectAllMode = true
+  }
+
+  //전체선택
+  selectAllList() {
+    this.selectAllMode = false
+  }
+
+  exitSelectMode() {
+    this.selectMode = false
+    this.selectAllMode = true
+  }
+
+  getListItems() {
+    const listItems = Array.from(this.renderRoot.querySelectorAll('editable-list-item'))
+    return listItems
+  }
+
+  enterSelectMode() {
+    this.selectMode = true
+  }
+
+  editFunction() {
+    const editBtn = this.renderRoot.querySelector('#edit-btn')
   }
 
   //selectBtn
   selectToggle() {
     this.selectMode = !this.selectMode
-    console.log(this.selectMode)
   }
 
   //체크된 직원 지우기
@@ -170,17 +225,26 @@ class TestAppMain extends connect(store)(PageView) {
     const checkedList = this.getCheckedList()
     let idList = []
     checkedList.forEach((checkedItem, i) => idList.push(checkedItem.item.id))
-    let deletedIdArray = await this.deleteEmployee(idList)
+    if (idList.length > 0) {
+      let deletedEmployees = await this.deleteEmployee(idList)
 
-    // 완료후 작업
-    deletedIdArray.forEach((id, i) => console.log(id.name + '님이 삭제되었습니다.'))
+      store.dispatch(
+        showSnackbar('info', {
+          message: `${deletedEmployees[0].name} ${
+            deletedEmployees.length > 1 ? `외 ${deletedEmployees.length - 1} 명이` : '님이'
+          } 삭제되었습니다.`,
+          timer: 5000
+        })
+      )
 
-    await this.refresh()
+      this.selectToggle()
+      await this.refresh()
+    }
   }
 
   //체크된 리스트 뽑아서 배열로 return
   getCheckedList() {
-    const listItems = Array.from(this.renderRoot.querySelectorAll('editable-list-item'))
+    const listItems = this.getListItems()
     const checked = listItems.filter((item, index) => item.isSelected)
 
     return checked
