@@ -1,8 +1,8 @@
 import { store } from '@things-factory/shell'
-import testApp from './reducers/main'
+import employeeList from './reducers/employee-list'
 
 export default function bootstrap() {
   store.addReducers({
-    testApp
+    employeeList
   })
 }

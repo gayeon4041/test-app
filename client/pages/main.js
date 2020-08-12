@@ -10,6 +10,8 @@ import gql from 'graphql-tag'
 
 import { showSnackbar } from '@things-factory/layout-base'
 
+import { UPDATE_SELECT_MODE } from '../actions/employee-list'
+
 class TestAppMain extends connect(store)(PageView) {
   static get styles() {
     return css`
@@ -22,7 +24,7 @@ class TestAppMain extends connect(store)(PageView) {
         flex: 1;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
       }
 
@@ -97,7 +99,7 @@ class TestAppMain extends connect(store)(PageView) {
         type: 'email',
         display: {
           editing: true,
-          plain: true
+          plain: false
         }
       },
       {
@@ -105,7 +107,7 @@ class TestAppMain extends connect(store)(PageView) {
         type: 'number',
         display: {
           editing: true,
-          plain: true
+          plain: false
         }
       }
     ]
@@ -141,7 +143,7 @@ class TestAppMain extends connect(store)(PageView) {
                     }
 
                     const updatedEmployee = await this.createOrUpdateEmployee(parsedNewEmployeeObj)
-                    this.updateSnackbar()
+                    this.updateSnackbar(name)
                     this.refresh()
                   }}
                   .deleteFunction=${async deleteObj => {
@@ -149,10 +151,10 @@ class TestAppMain extends connect(store)(PageView) {
                     const deletedEmployeeName = await this.deleteEmployee(id)
                     await this.refresh()
                     await this.updateComplete
+
                     console.log(deletedEmployeeName[0].name + '님이 삭제되었습니다.')
-                    this.deleteSnackbar()
+                    this.deleteSnackbar(deletedEmployeeName[0].name)
                   }}
-                  .selectMode=${this.selectMode}
                   .selectAllMode=${this.selectAllMode}
                 >
                 </editable-list-item>
@@ -171,8 +173,8 @@ class TestAppMain extends connect(store)(PageView) {
               age: Number(age)
             }
             await this.createOrUpdateEmployee(parsedNewEmployeeObj)
-            console.log('추가되었습니다')
 
+            this.addEmployeeSnackbar(name)
             await this.refresh()
           }}
         ></add-item>
@@ -188,19 +190,28 @@ class TestAppMain extends connect(store)(PageView) {
     this.selectAllMode = true
   }
 
-  deleteSnackbar() {
+  addEmployeeSnackbar(name) {
     store.dispatch(
       showSnackbar('info', {
-        message: `삭제되었습니다.`,
+        message: name + '님이 추가되었습니다.',
         timer: 5000
       })
     )
   }
 
-  updateSnackbar() {
+  deleteSnackbar(name) {
     store.dispatch(
       showSnackbar('info', {
-        message: `수정되었습니다.`,
+        message: `${name}님이 삭제되었습니다.`,
+        timer: 5000
+      })
+    )
+  }
+
+  updateSnackbar(name) {
+    store.dispatch(
+      showSnackbar('info', {
+        message: `${name}님이 수정되었습니다.`,
         timer: 5000
       })
     )
@@ -213,21 +224,30 @@ class TestAppMain extends connect(store)(PageView) {
 
   //전체선택
   selectAllList() {
-    this.selectAllMode = false
+    const items = this.getListItems()
+    items.forEach(item => (item.isSelected = true))
+    //this.selectAllMode = false
   }
 
+  //선택모드 취소
   exitSelectMode() {
-    this.selectMode = false
-    this.selectAllMode = true
+    store.dispatch({
+      type: UPDATE_SELECT_MODE,
+      selectMode: false
+    })
+  }
+
+  //선택모드
+  enterSelectMode() {
+    store.dispatch({
+      type: UPDATE_SELECT_MODE,
+      selectMode: true
+    })
   }
 
   getListItems() {
     const listItems = Array.from(this.renderRoot.querySelectorAll('editable-list-item'))
     return listItems
-  }
-
-  enterSelectMode() {
-    this.selectMode = true
   }
 
   editFunction() {
@@ -329,7 +349,7 @@ class TestAppMain extends connect(store)(PageView) {
   }
 
   stateChanged(state) {
-    // this.testApp = state.testApp.state_main
+    this.selectMode = state.employeeList.selectMode
   }
 }
 

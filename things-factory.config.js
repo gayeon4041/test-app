@@ -6,7 +6,11 @@ export default {
   routes: [
     {
       tagname: 'test-app-main',
-      page: 'test-app-main'
+      page: 'employee-list'
+    },
+    {
+      tagname: 'employee-detail',
+      page: 'employee-detail'
     }
   ],
   bootstrap
