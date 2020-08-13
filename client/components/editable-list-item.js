@@ -57,9 +57,9 @@ export class EditableListItem extends connect(store)(LitElement) {
       updateFunction: Function,
       deleteFunction: Function,
       isSelected: Boolean,
+      selectObject: Object,
       selectMode: Boolean,
-      selectAllMode: Boolean
-      //updatedEmp: Object
+      selectAll: Boolean
     }
   }
 
@@ -99,13 +99,16 @@ export class EditableListItem extends connect(store)(LitElement) {
       this.clearAll()
     }
 
-    if (changed.has('selectAllMode')) {
-      if (!this.selectAllMode) {
-        this.isSelected = true
-      } else {
-        this.clearAll()
-      }
+    if (changed.has('selectAll') && this.selectAll) {
+      this.isSelected = true
     }
+    // if (changed.has('selectAll')) {
+    //   if (this.selectAll) {
+    //     this.isSelected = true
+    //   } else {
+    //     this.clearAll()
+    //   }
+    // }
   }
 
   async updateItemFunction(item) {
@@ -114,6 +117,7 @@ export class EditableListItem extends connect(store)(LitElement) {
 
   clearAll() {
     this.isSelected = false
+    this.selectAll = false
   }
 
   selectedEvent(e) {
@@ -164,6 +168,7 @@ export class EditableListItem extends connect(store)(LitElement) {
 
   async stateChanged(state) {
     this.selectMode = state.employeeList.selectMode
+    this.selectAll = state.employeeList.selectAll
   }
 }
 

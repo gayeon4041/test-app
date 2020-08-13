@@ -10,7 +10,7 @@ import gql from 'graphql-tag'
 
 import { showSnackbar } from '@things-factory/layout-base'
 
-import { UPDATE_SELECT_MODE, RENEWAL_LIST } from '../actions/employee-list'
+import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST } from '../actions/employee-list'
 
 class TestAppMain extends connect(store)(PageView) {
   static get styles() {
@@ -72,7 +72,7 @@ class TestAppMain extends connect(store)(PageView) {
     return {
       employees: Array,
       selectMode: Boolean,
-      selectAllMode: Boolean,
+      selectAll: Boolean,
       needRenewal: Boolean
     }
   }
@@ -118,13 +118,8 @@ class TestAppMain extends connect(store)(PageView) {
         <test-app-title title="HatioLab Employees"></test-app-title>
         <div class="select-btns">
           ${this.selectMode
-            ? html`${this.selectAllMode
-                  ? html`<button @click=${this.selectAllList}>select all</button>`
-                  : html`<button @click=${this.cancelSelectAllList}>select cancel</button>`}<button
-                  @click=${this.exitSelectMode}
-                >
-                  cancel
-                </button>`
+            ? html` <button @click=${this.selectAllList}>select all</button>
+                <button @click=${this.exitSelectMode}>cancel</button>`
             : html`<button @click=${this.enterSelectMode}>select</button>`}
         </div>
         <ul>
@@ -182,7 +177,7 @@ class TestAppMain extends connect(store)(PageView) {
 
     this.employees = []
     this.selectMode = false
-    this.selectAllMode = true
+    this.selectAll = false
   }
 
   //초기설정 (litElement lifecycle)
@@ -196,11 +191,23 @@ class TestAppMain extends connect(store)(PageView) {
     }
   }
 
+  //-------------snackbar-----------------
   deleteSnackbar(name) {
     store.dispatch(
       showSnackbar('info', {
         message: `${name}님이 삭제되었습니다.`,
         timer: 3000
+      })
+    )
+  }
+
+  selectedItemsDeleteSnackbar(employees) {
+    store.dispatch(
+      showSnackbar('info', {
+        message: `${employees[0].name} ${
+          employees.length > 1 ? `외 ${employees.length - 1} 명이` : '님이'
+        } 삭제되었습니다.`,
+        timer: 5000
       })
     )
   }
@@ -223,31 +230,30 @@ class TestAppMain extends connect(store)(PageView) {
     )
   }
 
-  //전체선택 취소
-  cancelSelectAllList() {
-    this.selectAllMode = true
+  //-------------select mode-----------------
+
+  enterSelectMode() {
+    store.dispatch({
+      type: UPDATE_SELECT_MODE,
+      selectMode: true
+    })
   }
 
-  //전체선택
-  selectAllList() {
-    const items = this.getListItems()
-    items.forEach(item => (item.isSelected = true))
-    //this.selectAllMode = false
-  }
-
-  //선택모드 취소
   exitSelectMode() {
     store.dispatch({
       type: UPDATE_SELECT_MODE,
       selectMode: false
     })
+    store.dispatch({
+      type: UPDATE_SELECT_ALL_MODE,
+      selectAll: false
+    })
   }
 
-  //선택모드
-  enterSelectMode() {
+  selectAllList() {
     store.dispatch({
-      type: UPDATE_SELECT_MODE,
-      selectMode: true
+      type: UPDATE_SELECT_ALL_MODE,
+      selectAll: true
     })
   }
 
@@ -260,11 +266,6 @@ class TestAppMain extends connect(store)(PageView) {
     const editBtn = this.renderRoot.querySelector('#edit-btn')
   }
 
-  //selectBtn
-  selectToggle() {
-    this.selectMode = !this.selectMode
-  }
-
   //체크된 직원 지우기
   async deleteList() {
     const checkedList = this.getCheckedList()
@@ -272,17 +273,8 @@ class TestAppMain extends connect(store)(PageView) {
     checkedList.forEach((checkedItem, i) => idList.push(checkedItem.item.id))
     if (idList.length > 0) {
       let deletedEmployees = await this.deleteEmployee(idList)
+      this.selectedItemsDeleteSnackbar(deletedEmployees)
 
-      store.dispatch(
-        showSnackbar('info', {
-          message: `${deletedEmployees[0].name} ${
-            deletedEmployees.length > 1 ? `외 ${deletedEmployees.length - 1} 명이` : '님이'
-          } 삭제되었습니다.`,
-          timer: 5000
-        })
-      )
-
-      this.selectToggle()
       await this.refresh()
     }
   }
@@ -314,6 +306,10 @@ class TestAppMain extends connect(store)(PageView) {
     store.dispatch({
       type: RENEWAL_LIST,
       needRenewal: false
+    })
+    store.dispatch({
+      type: UPDATE_SELECT_MODE,
+      selectMode: false
     })
   }
 
