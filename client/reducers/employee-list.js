@@ -1,8 +1,9 @@
-import { UPDATE_SELECT_MODE, UPDATE_DETAIL_INFO } from '../actions/employee-list'
+import { UPDATE_SELECT_MODE, UPDATE_DETAIL_INFO, RENEWAL_LIST } from '../actions/employee-list'
 
 const INITIAL_STATE = {
   selectMode: false,
-  detailInfo: {}
+  detailInfo: {},
+  needRenewal: false
 }
 
 const employeeList = (state = INITIAL_STATE, action) => {
@@ -12,6 +13,9 @@ const employeeList = (state = INITIAL_STATE, action) => {
 
     case UPDATE_DETAIL_INFO:
       return { ...state, detailInfo: action.detailInfo }
+
+    case RENEWAL_LIST:
+      return { ...state, needRenewal: action.needRenewal }
 
     default:
       return state

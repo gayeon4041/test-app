@@ -59,6 +59,7 @@ export class EditableListItem extends connect(store)(LitElement) {
       isSelected: Boolean,
       selectMode: Boolean,
       selectAllMode: Boolean
+      //updatedEmp: Object
     }
   }
 
@@ -89,6 +90,7 @@ export class EditableListItem extends connect(store)(LitElement) {
 
     this.fields = []
     this.item = {}
+    this.updatedEmp = {}
     this.isSelected = false
   }
 
@@ -106,6 +108,10 @@ export class EditableListItem extends connect(store)(LitElement) {
     }
   }
 
+  async updateItemFunction(item) {
+    await this.updateFunction(item)
+  }
+
   clearAll() {
     this.isSelected = false
   }
@@ -117,8 +123,14 @@ export class EditableListItem extends connect(store)(LitElement) {
   navigateToDetail() {
     store.dispatch({
       type: UPDATE_DETAIL_INFO,
-      detailInfo: { item: this.item, fields: this.fields }
+      detailInfo: {
+        item: this.item,
+        fields: this.fields,
+        update: this.updateFunction,
+        delete: this.deleteFunction
+      }
     })
+    console.log(this.updateFunction, this.deleteFunction)
     navigate('employee-detail')
   }
 
@@ -140,17 +152,17 @@ export class EditableListItem extends connect(store)(LitElement) {
     this.isEditing = false
   }
 
-  //update
-  async updateItem(e) {
-    e.preventDefault()
+  // //update
+  // async updateItem(e) {
+  //   e.preventDefault()
 
-    const updateObj = this.serialize()
-    await this.updateFunction(updateObj)
+  //   const updateObj = this.serialize()
+  //   await this.updateFunction(updateObj)
 
-    this.quitEditMode()
-  }
+  //   this.quitEditMode()
+  // }
 
-  stateChanged(state) {
+  async stateChanged(state) {
     this.selectMode = state.employeeList.selectMode
   }
 }

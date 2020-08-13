@@ -10,7 +10,7 @@ import gql from 'graphql-tag'
 
 import { showSnackbar } from '@things-factory/layout-base'
 
-import { UPDATE_SELECT_MODE } from '../actions/employee-list'
+import { UPDATE_SELECT_MODE, RENEWAL_LIST } from '../actions/employee-list'
 
 class TestAppMain extends connect(store)(PageView) {
   static get styles() {
@@ -72,7 +72,8 @@ class TestAppMain extends connect(store)(PageView) {
     return {
       employees: Array,
       selectMode: Boolean,
-      selectAllMode: Boolean
+      selectAllMode: Boolean,
+      needRenewal: Boolean
     }
   }
 
@@ -141,18 +142,12 @@ class TestAppMain extends connect(store)(PageView) {
                       email,
                       age: Number(age)
                     }
-
                     const updatedEmployee = await this.createOrUpdateEmployee(parsedNewEmployeeObj)
                     this.updateSnackbar(name)
-                    this.refresh()
                   }}
                   .deleteFunction=${async deleteObj => {
                     const id = deleteObj.id
                     const deletedEmployeeName = await this.deleteEmployee(id)
-                    await this.refresh()
-                    await this.updateComplete
-
-                    console.log(deletedEmployeeName[0].name + '님이 삭제되었습니다.')
                     this.deleteSnackbar(deletedEmployeeName[0].name)
                   }}
                   .selectAllMode=${this.selectAllMode}
@@ -190,20 +185,31 @@ class TestAppMain extends connect(store)(PageView) {
     this.selectAllMode = true
   }
 
-  addEmployeeSnackbar(name) {
-    store.dispatch(
-      showSnackbar('info', {
-        message: name + '님이 추가되었습니다.',
-        timer: 5000
-      })
-    )
+  //초기설정 (litElement lifecycle)
+  firstUpdated() {
+    this.refresh()
+  }
+
+  updated(changed) {
+    if (this.needRenewal) {
+      this.refresh()
+    }
   }
 
   deleteSnackbar(name) {
     store.dispatch(
       showSnackbar('info', {
         message: `${name}님이 삭제되었습니다.`,
-        timer: 5000
+        timer: 3000
+      })
+    )
+  }
+
+  addEmployeeSnackbar(name) {
+    store.dispatch(
+      showSnackbar('info', {
+        message: `${name}님이 추가되었습니다.`,
+        timer: 3000
       })
     )
   }
@@ -212,7 +218,7 @@ class TestAppMain extends connect(store)(PageView) {
     store.dispatch(
       showSnackbar('info', {
         message: `${name}님이 수정되었습니다.`,
-        timer: 5000
+        timer: 3000
       })
     )
   }
@@ -289,11 +295,6 @@ class TestAppMain extends connect(store)(PageView) {
     return checked
   }
 
-  //초기설정 (litElement lifecycle)
-  firstUpdated() {
-    this.refresh()
-  }
-
   //graphql 데이터 불러오기
   async refresh() {
     const response = await client.query({
@@ -310,6 +311,10 @@ class TestAppMain extends connect(store)(PageView) {
     })
 
     this.employees = response.data.employees
+    store.dispatch({
+      type: RENEWAL_LIST,
+      needRenewal: false
+    })
   }
 
   //graphql 데이터 추가,수정
@@ -350,6 +355,7 @@ class TestAppMain extends connect(store)(PageView) {
 
   stateChanged(state) {
     this.selectMode = state.employeeList.selectMode
+    this.needRenewal = state.employeeList.needRenewal
   }
 }
 
