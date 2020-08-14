@@ -30,13 +30,16 @@ class TestAppMain extends connect(store)(PageView) {
 
       ul {
         list-style: none;
-        overflow: auto;
         flex: 0.5;
+        overflow: auto;
         margin: auto;
-        border: 1px solid #ed6856;
+        border: 3px solid #ed6856;
         border-radius: 8px;
         margin: 20px;
         padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
       }
 
       li {
@@ -124,7 +127,7 @@ class TestAppMain extends connect(store)(PageView) {
         </div>
         <ul>
           ${this.employees.map(
-            (e, i) => html`
+            e => html`
               <li>
                 <editable-list-item
                   .item=${e}
@@ -231,7 +234,6 @@ class TestAppMain extends connect(store)(PageView) {
   }
 
   //-------------select mode-----------------
-
   enterSelectMode() {
     store.dispatch({
       type: UPDATE_SELECT_MODE,

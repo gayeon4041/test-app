@@ -11,11 +11,6 @@ export class EditableListItem extends connect(store)(LitElement) {
         height: 100%;
       }
 
-      :host > div {
-        display: grid;
-        grid-template-columns: auto 1fr 2fr 1fr;
-      }
-
       button {
         border: 0;
         outline: 0;
@@ -23,28 +18,17 @@ export class EditableListItem extends connect(store)(LitElement) {
         margin-right: 5px;
       }
 
-      .submitBtn {
-        border: 0;
-        outline: 0;
-        border-radius: 8px;
-      }
-
       .listName {
         color: #ef5956;
         font-weight: 700;
       }
 
-      #editForm {
-        display: grid;
-        grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr;
-      }
-
-      #editForm input {
-        margin-right: 5px;
-      }
-
       .listValue {
         margin-right: 10px;
+      }
+
+      .detail-btn {
+        padding: 5px 10px;
       }
     `
   }
@@ -77,7 +61,7 @@ export class EditableListItem extends connect(store)(LitElement) {
               : html``}
           `
       )}
-      <button id="detail-btn" @click=${this.navigateToDetail} .hidden=${this.selectMode}>
+      <button class="detail-btn" @click=${this.navigateToDetail} .hidden=${this.selectMode}>
         detail
       </button>
     </div>`
@@ -90,7 +74,6 @@ export class EditableListItem extends connect(store)(LitElement) {
 
     this.fields = []
     this.item = {}
-    this.updatedEmp = {}
     this.isSelected = false
   }
 
@@ -102,13 +85,6 @@ export class EditableListItem extends connect(store)(LitElement) {
     if (changed.has('selectAll') && this.selectAll) {
       this.isSelected = true
     }
-    // if (changed.has('selectAll')) {
-    //   if (this.selectAll) {
-    //     this.isSelected = true
-    //   } else {
-    //     this.clearAll()
-    //   }
-    // }
   }
 
   async updateItemFunction(item) {
@@ -134,7 +110,7 @@ export class EditableListItem extends connect(store)(LitElement) {
         delete: this.deleteFunction
       }
     })
-    console.log(this.updateFunction, this.deleteFunction)
+
     navigate('employee-detail')
   }
 
@@ -155,16 +131,6 @@ export class EditableListItem extends connect(store)(LitElement) {
 
     this.isEditing = false
   }
-
-  // //update
-  // async updateItem(e) {
-  //   e.preventDefault()
-
-  //   const updateObj = this.serialize()
-  //   await this.updateFunction(updateObj)
-
-  //   this.quitEditMode()
-  // }
 
   async stateChanged(state) {
     this.selectMode = state.employeeList.selectMode

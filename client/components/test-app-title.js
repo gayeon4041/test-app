@@ -3,7 +3,7 @@ import { LitElement, html, css } from 'lit-element'
 export class TestAppTitle extends LitElement {
   static get styles() {
     return css`
-      h2 {
+      h1 {
         color: #ef5956;
       }
     `
@@ -18,7 +18,7 @@ export class TestAppTitle extends LitElement {
   render() {
     return html`
       <div>
-        <h2>${this.title}</h2>
+        <h1>${this.title}</h1>
       </div>
     `
   }

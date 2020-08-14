@@ -11,7 +11,7 @@ export class AddItem extends LitElement {
         display: flex;
         flex-direction: column;
         align-items: center;
-        border: 1px solid #ed6856;
+        border: 3px solid #ed6856;
         border-radius: 8px;
         padding: 20px;
       }
