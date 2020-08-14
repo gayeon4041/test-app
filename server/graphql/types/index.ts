@@ -1,6 +1,7 @@
-import { Filter, Pagination, Sorting, ObjectRef } from '@things-factory/shell'
+import { Company } from './company'
 import { Employee } from './employee'
 import { EmployeeInput } from './employee-input'
+
 // import * as CommonCode from './common-code'
 // import * as CommonCodeDetail from './common-code-detail'
 
@@ -22,6 +23,7 @@ import { EmployeeInput } from './employee-input'
 export const queries = [
   /* GraphQL */ `
   employees(name: String): [Employee]
+  companies: [Company]
 `
 ]
 
@@ -32,4 +34,4 @@ export const mutations = [
 `
 ]
 
-export const types = [Filter, Pagination, Sorting, ObjectRef, Employee, EmployeeInput]
+export const types = [Company, Employee, EmployeeInput]

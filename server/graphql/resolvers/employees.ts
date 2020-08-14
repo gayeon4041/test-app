@@ -7,7 +7,9 @@ export const employeesResolver = {
     if (name) {
       findCodition = { name }
     }
+
     let result = await Employee.find(findCodition)
+
     return result
   }
 }

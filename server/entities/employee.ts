@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from 'typeorm'
+import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
+import { Company } from '.'
 
 @Entity()
 export class Employee extends BaseEntity {
@@ -10,6 +11,12 @@ export class Employee extends BaseEntity {
 
   @Column()
   email: string
+
+  @Column({ nullable: true })
+  companyId: string
+
+  @ManyToOne(type => Company)
+  company: Company
 
   @Column({
     type: 'integer',

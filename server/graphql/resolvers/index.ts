@@ -1,6 +1,10 @@
-import { employeesResolver } from './employees'
+import { companyResolver } from './company'
+import { companySubQuery } from './company-sub-query'
 import { createOrUpdateEmployeeResolver } from './create-or-update-employee'
 import { deleteEmployeeResolver } from './delete-employee'
+import { employeesResolver } from './employees'
+import { employeesSubQuery } from './employees-sub-query'
+
 // import * as CommonCode from './common-code'
 // import * as CommonCodeDetail from './common-code-detail'
 //
@@ -14,6 +18,6 @@ import { deleteEmployeeResolver } from './delete-employee'
 //   CommonCodeDetail.Mutation
 // ]
 
-export const queries = [employeesResolver]
+export const queries = [employeesResolver, companyResolver, companySubQuery, employeesSubQuery]
 
 export const mutations = [createOrUpdateEmployeeResolver, deleteEmployeeResolver]
