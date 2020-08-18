@@ -1,5 +1,5 @@
 import { BaseEntity, Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm'
-import { Company } from '.'
+import { Company } from './company'
 
 @Entity()
 export class Employee extends BaseEntity {
@@ -12,15 +12,12 @@ export class Employee extends BaseEntity {
   @Column()
   email: string
 
-  @Column({ nullable: true })
-  companyId: string
-
-  @ManyToOne(type => Company)
-  company: Company
-
-  @Column({
-    type: 'integer',
-    nullable: true
-  })
+  @Column({ type: 'integer', nullable: true })
   age?: number
+
+  @Column({ nullable: true })
+  companyId?: string
+
+  @ManyToOne(type => Company, { nullable: true })
+  company?: Company
 }

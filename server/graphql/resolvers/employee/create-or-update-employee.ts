@@ -1,4 +1,4 @@
-import { Employee } from '../../entities'
+import { Employee } from '../../../entities'
 
 export const createOrUpdateEmployeeResolver = {
   async createOrUpdateEmployee(_: any, { employee }: { employee: Partial<Employee> }) {

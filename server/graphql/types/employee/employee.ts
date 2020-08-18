@@ -6,7 +6,7 @@ export const Employee = gql`
     name: String
     age: Int
     email: String
-    department: String
+    departmant: String
     company: Company
   }
 `

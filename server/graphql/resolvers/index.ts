@@ -1,10 +1,3 @@
-import { companyResolver } from './company'
-import { companySubQuery } from './company-sub-query'
-import { createOrUpdateEmployeeResolver } from './create-or-update-employee'
-import { deleteEmployeeResolver } from './delete-employee'
-import { employeesResolver } from './employees'
-import { employeesSubQuery } from './employees-sub-query'
-
 // import * as CommonCode from './common-code'
 // import * as CommonCodeDetail from './common-code-detail'
 //
@@ -17,6 +10,13 @@ import { employeesSubQuery } from './employees-sub-query'
 //   CommonCode.Mutation,
 //   CommonCodeDetail.Mutation
 // ]
+
+import { employeesResolver } from './employee/employees'
+import { createOrUpdateEmployeeResolver } from './employee/create-or-update-employee'
+import { deleteEmployeeResolver } from './employee/delete-employee'
+import { companyResolver } from './company/company'
+import { companySubQuery } from './company/company-sub-query'
+import { employeesSubQuery } from './employee/employees-sub-query'
 
 export const queries = [employeesResolver, companyResolver, companySubQuery, employeesSubQuery]
 

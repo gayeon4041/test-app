@@ -11,6 +11,10 @@ export default {
     {
       tagname: 'employee-detail',
       page: 'employee-detail'
+    },
+    {
+      tagname: 'company-main',
+      page: 'company-main'
     }
   ],
   bootstrap

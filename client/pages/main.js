@@ -2,7 +2,7 @@ import '../components/test-app-title'
 import '../components/add-item'
 import '../components/editable-list-item'
 
-import { PageView, client, store } from '@things-factory/shell'
+import { PageView, client, store, navigate } from '@things-factory/shell'
 import { css, html } from 'lit-element'
 
 import { connect } from 'pwa-helpers/connect-mixin.js'
@@ -112,6 +112,14 @@ class TestAppMain extends connect(store)(PageView) {
         display: {
           editing: true,
           plain: false
+        }
+      },
+      {
+        name: 'company',
+        type: 'text',
+        display: {
+          editing: false,
+          plain: true
         }
       }
     ]
@@ -299,12 +307,16 @@ class TestAppMain extends connect(store)(PageView) {
             name
             email
             age
+            company {
+              name
+            }
           }
         }
       `
     })
 
     this.employees = response.data.employees
+
     store.dispatch({
       type: RENEWAL_LIST,
       needRenewal: false

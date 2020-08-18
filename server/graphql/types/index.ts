@@ -1,6 +1,7 @@
-import { Company } from './company'
-import { Employee } from './employee'
-import { EmployeeInput } from './employee-input'
+import { Company } from './company/company'
+import { Employee } from './employee/employee'
+import { EmployeeInput } from './employee/employee-input'
+// -------------------------------------------------
 
 // import * as CommonCode from './common-code'
 // import * as CommonCodeDetail from './common-code-detail'
@@ -20,18 +21,19 @@ import { EmployeeInput } from './employee-input'
 //   ...CommonCodeDetail.Types
 // ]
 
+// ------------------------------------------
 export const queries = [
   /* GraphQL */ `
   employees(name: String): [Employee]
-  companies: [Company]
-`
+  companies(id: String): [Company]
+  `
 ]
 
 export const mutations = [
   /* GraphQL */ `
   createOrUpdateEmployee(employee: EmployeeInput): Employee
   deleteEmployee(ids: [String]): [Employee]
-`
+  `
 ]
 
 export const types = [Company, Employee, EmployeeInput]

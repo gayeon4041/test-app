@@ -1,4 +1,4 @@
-import { Employee } from '../../entities'
+import { Employee } from '../../../entities'
 
 export const deleteEmployeeResolver = {
   async deleteEmployee(_: any, { ids }: { ids: string[] }) {

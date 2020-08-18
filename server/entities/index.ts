@@ -1,5 +1,5 @@
-import { Company } from './company'
 import { Employee } from './employee'
+import { Company } from './company'
 
 export const entities = [Employee, Company]
 
