@@ -5,8 +5,8 @@ export default function route(page) {
     case 'company-main':
       import('./pages/company-main')
       return page
-    case 'employee-list':
-      import('./pages/main')
+    case 'employees-main':
+      import('./pages/employees-main')
       return page
 
     case 'employee-detail':

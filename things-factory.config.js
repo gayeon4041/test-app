@@ -5,8 +5,8 @@ export default {
   route,
   routes: [
     {
-      tagname: 'test-app-main',
-      page: 'employee-list'
+      tagname: 'employees-main',
+      page: 'employees-main'
     },
     {
       tagname: 'employee-detail',

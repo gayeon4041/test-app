@@ -10,9 +10,9 @@ import gql from 'graphql-tag'
 
 import { showSnackbar } from '@things-factory/layout-base'
 
-import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST } from '../actions/employee-list'
+import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST, GET_COMPANY_ID } from '../actions/employee-list'
 
-class TestAppMain extends connect(store)(PageView) {
+class EmployeesMain extends connect(store)(PageView) {
   static get styles() {
     return css`
       :host {
@@ -76,7 +76,8 @@ class TestAppMain extends connect(store)(PageView) {
       employees: Array,
       selectMode: Boolean,
       selectAll: Boolean,
-      needRenewal: Boolean
+      needRenewal: Boolean,
+      companyId: String
     }
   }
 
@@ -112,14 +113,6 @@ class TestAppMain extends connect(store)(PageView) {
         display: {
           editing: true,
           plain: false
-        }
-      },
-      {
-        name: 'company',
-        type: 'text',
-        display: {
-          editing: false,
-          plain: true
         }
       }
     ]
@@ -176,7 +169,7 @@ class TestAppMain extends connect(store)(PageView) {
             await this.createOrUpdateEmployee(parsedNewEmployeeObj)
 
             this.addEmployeeSnackbar(name)
-            await this.refresh()
+            await this.refresh(this.companyId)
           }}
         ></add-item>
       </section>
@@ -189,16 +182,17 @@ class TestAppMain extends connect(store)(PageView) {
     this.employees = []
     this.selectMode = false
     this.selectAll = false
+    this.companyId = ''
   }
 
   //초기설정 (litElement lifecycle)
   firstUpdated() {
-    this.refresh()
+    this.refresh(this.companyId)
   }
 
   updated(changed) {
     if (this.needRenewal) {
-      this.refresh()
+      this.getCompanyEmployees()
     }
   }
 
@@ -285,7 +279,7 @@ class TestAppMain extends connect(store)(PageView) {
       let deletedEmployees = await this.deleteEmployee(idList)
       this.selectedItemsDeleteSnackbar(deletedEmployees)
 
-      await this.refresh()
+      await this.refresh(this.companyId)
     }
   }
 
@@ -298,29 +292,57 @@ class TestAppMain extends connect(store)(PageView) {
   }
 
   //graphql 데이터 불러오기
-  async refresh() {
+  async getCompanyEmployees(id) {
     const response = await client.query({
       query: gql`
-        query {
-          employees {
-            id
-            name
-            email
-            age
-            company {
+        query($id: String) {
+          companies(id: $id) {
+            employees {
+              id
               name
+              email
+              age
             }
           }
         }
-      `
+      `,
+      variables: {
+        id
+      }
+    })
+    this.employees = response.data.companies
+    console.log(this.employees)
+  }
+
+  async refresh(id) {
+    const response = await client.query({
+      query: gql`
+        query($id: String) {
+          companies(id: $id) {
+            employees {
+              id
+              name
+              email
+              age
+            }
+          }
+        }
+      `,
+      variables: {
+        id
+      }
     })
 
-    this.employees = response.data.employees
+    let tmp = response.data.companies
+    console.log(tmp[0].employees)
+
+    this.employees = tmp[0].employees
 
     store.dispatch({
       type: RENEWAL_LIST,
       needRenewal: false
     })
+
     store.dispatch({
       type: UPDATE_SELECT_MODE,
       selectMode: false
@@ -366,7 +388,8 @@ class TestAppMain extends connect(store)(PageView) {
   stateChanged(state) {
     this.selectMode = state.employeeList.selectMode
     this.needRenewal = state.employeeList.needRenewal
+    this.companyId = state.employeeList.companyId
   }
 }
 
-window.customElements.define('test-app-main', TestAppMain)
+window.customElements.define('employees-main', EmployeesMain)

@@ -178,7 +178,7 @@ class EmployeeDetail extends connect(store)(PageView) {
       detailInfo: {}
     })
 
-    navigate('employee-list')
+    navigate('employees-main')
   }
 }
 
