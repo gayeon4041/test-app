@@ -2,7 +2,7 @@ import { Employee } from '../../../entities'
 
 export const createOrUpdateEmployeeResolver = {
   async createOrUpdateEmployee(_: any, { employee }: { employee: Partial<Employee> }) {
-    const { id } = employee
+    const { id, companyId } = employee
 
     let updateUser
     if (id) {
@@ -11,6 +11,7 @@ export const createOrUpdateEmployeeResolver = {
     } else {
       // create employee
       updateUser = new Employee()
+      updateUser.companyId = companyId
     }
 
     Object.assign(updateUser, employee)

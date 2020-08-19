@@ -3,6 +3,10 @@ import { LitElement, html, css } from 'lit-element'
 export class AddItem extends LitElement {
   static get styles() {
     return css`
+      [hidden] {
+        display: none;
+      }
+
       form label {
         display: block;
       }
@@ -43,6 +47,7 @@ export class AddItem extends LitElement {
   static get properties() {
     return {
       fields: Array,
+      defaultValues: Object,
       addEmployee: Function
     }
   }
@@ -52,9 +57,12 @@ export class AddItem extends LitElement {
       <form id="add-form" @submit=${this.addFunction}>
         ${this.fields.map(
           f =>
-            html` ${f.display.editing
-              ? html` <label>${f.name}: <input type=${f.type} name=${f.name} /> </label>`
-              : html``}`
+            html`
+              <label ?hidden=${!f.display}
+                >${f.name}:
+                <input type=${f.type} name=${f.name} .value=${this.defaultValues[f.name] ?? ''} />
+              </label>
+            `
         )}
         <input class="create-button" type="submit" value="create" />
       </form>
@@ -65,6 +73,7 @@ export class AddItem extends LitElement {
     super()
 
     this.fields = []
+    this.defaultValues = {}
   }
 
   async addFunction(e) {
@@ -74,6 +83,8 @@ export class AddItem extends LitElement {
     const formData = new FormData(form)
 
     const addObj = await Object.fromEntries(formData.entries())
+
+    console.log(addObj)
     let successForm = true
     for (let key in addObj) {
       if (addObj[key] === '') {

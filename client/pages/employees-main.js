@@ -77,7 +77,9 @@ class EmployeesMain extends connect(store)(PageView) {
       selectMode: Boolean,
       selectAll: Boolean,
       needRenewal: Boolean,
-      companyId: String
+      companyId: String,
+      companyName: String,
+      defaultValues: Object
     }
   }
 
@@ -114,12 +116,42 @@ class EmployeesMain extends connect(store)(PageView) {
           editing: true,
           plain: false
         }
+      },
+      {
+        name: 'companyId',
+        type: 'hidden',
+        display: {
+          editing: false,
+          plain: false
+        }
       }
     ]
 
+    const addFieldOptions = [
+      {
+        name: 'name',
+        type: 'text',
+        display: true
+      },
+      {
+        name: 'email',
+        type: 'email',
+        display: true
+      },
+      {
+        name: 'age',
+        type: 'number',
+        display: true
+      },
+      {
+        name: 'companyId',
+        type: 'hidden',
+        display: false
+      }
+    ]
     return html`
       <section>
-        <test-app-title title="HatioLab Employees"></test-app-title>
+        <test-app-title title="${this.companyName} Employees"></test-app-title>
         <div class="select-btns">
           ${this.selectMode
             ? html` <button @click=${this.selectAllList}>select all</button>
@@ -158,13 +190,15 @@ class EmployeesMain extends connect(store)(PageView) {
         </ul>
         <button @click=${this.deleteList}>delete</button>
         <add-item
-          .fields=${fieldOptions}
+          .fields=${addFieldOptions}
+          .defaultValues=${this.defaultValues}
           .addEmployee=${async addObj => {
-            const { name, email, age } = addObj
+            const { name, email, age, companyId } = addObj
             const parsedNewEmployeeObj = {
               name,
               email,
-              age: Number(age)
+              age: Number(age),
+              companyId
             }
             await this.createOrUpdateEmployee(parsedNewEmployeeObj)
 
@@ -183,16 +217,25 @@ class EmployeesMain extends connect(store)(PageView) {
     this.selectMode = false
     this.selectAll = false
     this.companyId = ''
-  }
-
-  //초기설정 (litElement lifecycle)
-  firstUpdated() {
-    this.refresh(this.companyId)
+    this.companyName = ''
+    this.defaultValues = {}
   }
 
   updated(changed) {
-    if (this.needRenewal) {
-      this.getCompanyEmployees()
+    if (changed.has('needRenewal') && this.needRenewal) {
+      this.refresh(this.companyId)
+    }
+
+    if (changed.has('companyId') && this.companyId) {
+      this.defaultValues = {
+        ...this.defaultValues,
+        companyId: this.companyId
+      }
+
+      store.dispatch({
+        type: RENEWAL_LIST,
+        needRenewal: true
+      })
     }
   }
 
@@ -292,33 +335,12 @@ class EmployeesMain extends connect(store)(PageView) {
   }
 
   //graphql 데이터 불러오기
-  async getCompanyEmployees(id) {
-    const response = await client.query({
-      query: gql`
-        query($id: String) {
-          companies(id: $id) {
-            employees {
-              id
-              name
-              email
-              age
-            }
-          }
-        }
-      `,
-      variables: {
-        id
-      }
-    })
-    this.employees = response.data.companies
-    console.log(this.employees)
-  }
-
   async refresh(id) {
     const response = await client.query({
       query: gql`
         query($id: String) {
           companies(id: $id) {
+            name
             employees {
               id
               name
@@ -333,10 +355,10 @@ class EmployeesMain extends connect(store)(PageView) {
       }
     })
 
-    let tmp = response.data.companies
-    console.log(tmp[0].employees)
+    let company = response.data.companies[0]
 
-    this.employees = tmp[0].employees
+    this.employees = company.employees
+    this.companyName = company.name
 
     store.dispatch({
       type: RENEWAL_LIST,
@@ -385,7 +407,8 @@ class EmployeesMain extends connect(store)(PageView) {
     return response.data.deleteEmployee
   }
 
-  stateChanged(state) {
+  async stateChanged(state) {
+    await this.updateComplete
     this.selectMode = state.employeeList.selectMode
     this.needRenewal = state.employeeList.needRenewal
     this.companyId = state.employeeList.companyId

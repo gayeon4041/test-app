@@ -6,6 +6,7 @@ export const EmployeeInput = gql`
     name: String
     age: Int
     email: String
+    companyId: String
     department: String
   }
 `
