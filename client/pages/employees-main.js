@@ -1,6 +1,7 @@
 import '../components/test-app-title'
 import '../components/add-item'
 import '../components/editable-list-item'
+import '../components/search-item'
 
 import { PageView, client, store, navigate } from '@things-factory/shell'
 import { css, html } from 'lit-element'
@@ -114,7 +115,7 @@ class EmployeesMain extends connect(store)(PageView) {
         type: 'number',
         display: {
           editing: true,
-          plain: false
+          plain: true
         }
       },
       {
@@ -152,6 +153,12 @@ class EmployeesMain extends connect(store)(PageView) {
     return html`
       <section>
         <test-app-title title="${this.companyName} Employees"></test-app-title>
+        <search-item
+          .fields=${fieldOptions}
+          .searchFunction=${async searchObj => {
+            await this.refresh(this.companyName, searchObj.search)
+          }}
+        ></search-item>
         <div class="select-btns">
           ${this.selectMode
             ? html` <button @click=${this.selectAllList}>select all</button>
@@ -203,7 +210,7 @@ class EmployeesMain extends connect(store)(PageView) {
             await this.createOrUpdateEmployee(parsedNewEmployeeObj)
 
             this.addEmployeeSnackbar(name)
-            await this.refresh(this.companyId)
+            await this.refresh(this.companyName)
           }}
         ></add-item>
       </section>
@@ -216,14 +223,14 @@ class EmployeesMain extends connect(store)(PageView) {
     this.employees = []
     this.selectMode = false
     this.selectAll = false
-    this.companyId = ''
+
     this.companyName = ''
     this.defaultValues = {}
   }
 
   updated(changed) {
     if (changed.has('needRenewal') && this.needRenewal) {
-      this.refresh(this.companyId)
+      this.refresh(this.companyName)
     }
 
     if (changed.has('companyId') && this.companyId) {
@@ -231,11 +238,14 @@ class EmployeesMain extends connect(store)(PageView) {
         ...this.defaultValues,
         companyId: this.companyId
       }
+    }
 
+    if (changed.has('companyName') && this.companyName) {
       store.dispatch({
         type: RENEWAL_LIST,
         needRenewal: true
       })
+      console.log(this.companyName)
     }
   }
 
@@ -322,7 +332,7 @@ class EmployeesMain extends connect(store)(PageView) {
       let deletedEmployees = await this.deleteEmployee(idList)
       this.selectedItemsDeleteSnackbar(deletedEmployees)
 
-      await this.refresh(this.companyId)
+      await this.refresh(this.companyName)
     }
   }
 
@@ -335,13 +345,15 @@ class EmployeesMain extends connect(store)(PageView) {
   }
 
   //graphql 데이터 불러오기
-  async refresh(id) {
+
+  async refresh(companyName, employeesName) {
     const response = await client.query({
       query: gql`
-        query($id: String) {
-          companies(id: $id) {
+        query($companyName: String, $employeesName: String) {
+          companies(name: $companyName) {
+            id
             name
-            employees {
+            employees(name: $employeesName) {
               id
               name
               email
@@ -351,7 +363,8 @@ class EmployeesMain extends connect(store)(PageView) {
         }
       `,
       variables: {
-        id
+        companyName,
+        employeesName
       }
     })
 
@@ -359,6 +372,7 @@ class EmployeesMain extends connect(store)(PageView) {
 
     this.employees = company.employees
     this.companyName = company.name
+    this.companyId = company.id
 
     store.dispatch({
       type: RENEWAL_LIST,
@@ -407,11 +421,17 @@ class EmployeesMain extends connect(store)(PageView) {
     return response.data.deleteEmployee
   }
 
+  getURLinfo(key) {
+    const location = new URL(window.location)
+    return location.searchParams.get(key)
+  }
+
   async stateChanged(state) {
     await this.updateComplete
+
+    this.companyName = this.getURLinfo('company')
     this.selectMode = state.employeeList.selectMode
     this.needRenewal = state.employeeList.needRenewal
-    this.companyId = state.employeeList.companyId
   }
 }
 

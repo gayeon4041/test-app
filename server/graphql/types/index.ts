@@ -25,7 +25,7 @@ import { EmployeeInput } from './employee/employee-input'
 export const queries = [
   /* GraphQL */ `
   employees(name: String): [Employee]
-  companies(id: String): [Company]
+  companies(id: String, name: String): [Company]
   `
 ]
 

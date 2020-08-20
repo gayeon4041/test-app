@@ -70,14 +70,9 @@ class CompanyMain extends connect(store)(PageView) {
   }
 
   companyToEmployees(e) {
-    const getCompanyId = e.target.value
+    const companyName = e.target.name
 
-    store.dispatch({
-      type: GET_COMPANY_ID,
-      companyId: getCompanyId
-    })
-
-    navigate('employees-main')
+    navigate(`employees-main?${companyName}`)
   }
 
   async getCompany() {

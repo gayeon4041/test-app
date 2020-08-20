@@ -5,7 +5,7 @@ export const Company = gql`
     id: String
     name: String
     description: String
-    employees: [Employee]
+    employees(name: String): [Employee]
     createdAt: String
     updatedAt: String
   }
