@@ -101,17 +101,7 @@ export class EditableListItem extends connect(store)(LitElement) {
   }
 
   navigateToDetail() {
-    store.dispatch({
-      type: UPDATE_DETAIL_INFO,
-      detailInfo: {
-        item: this.item,
-        fields: this.fields,
-        update: this.updateFunction,
-        delete: this.deleteFunction
-      }
-    })
-
-    navigate('employee-detail')
+    navigate(`employee-detail?id=${this.item.id}`)
   }
 
   //삭제

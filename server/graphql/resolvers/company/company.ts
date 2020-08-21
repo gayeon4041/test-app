@@ -1,15 +1,32 @@
 import { Company } from '../../../entities'
+import { Like } from 'typeorm'
 
 export const companyResolver = {
-  async companies(_: any, { id, name }: { id?: string; name?: string }) {
+  async companies(_: any, { id, name, sortOption }: { id?: string; name?: string; sortOption?: string }) {
+    const findCondition: Record<string, any> = {}
+    let whereCondition
+
     if (id) {
       return await Company.findByIds([id])
     }
 
     if (name) {
-      return await Company.find({ name })
+      whereCondition = {
+        ...whereCondition,
+        name: Like(`${name}%`)
+      }
     }
 
-    return await Company.find()
+    if (whereCondition) {
+      findCondition.where = whereCondition
+    }
+
+    if (sortOption) {
+      findCondition.order = { name: sortOption }
+    }
+
+    return await Company.find(findCondition)
   }
 }
+
+// order: { name: 'ASC' }

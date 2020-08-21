@@ -12,6 +12,7 @@ import gql from 'graphql-tag'
 import { showSnackbar } from '@things-factory/layout-base'
 
 import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST, GET_COMPANY_ID } from '../actions/employee-list'
+import { getURLinfo } from '../utils/get-url'
 
 class EmployeesMain extends connect(store)(PageView) {
   static get styles() {
@@ -245,7 +246,9 @@ class EmployeesMain extends connect(store)(PageView) {
         type: RENEWAL_LIST,
         needRenewal: true
       })
-      console.log(this.companyName)
+    }
+    if (changed.has('active') && this.active) {
+      this.companyName = getURLinfo('company')
     }
   }
 
@@ -371,7 +374,6 @@ class EmployeesMain extends connect(store)(PageView) {
     let company = response.data.companies[0]
 
     this.employees = company.employees
-    this.companyName = company.name
     this.companyId = company.id
 
     store.dispatch({
@@ -421,15 +423,9 @@ class EmployeesMain extends connect(store)(PageView) {
     return response.data.deleteEmployee
   }
 
-  getURLinfo(key) {
-    const location = new URL(window.location)
-    return location.searchParams.get(key)
-  }
-
   async stateChanged(state) {
     await this.updateComplete
 
-    this.companyName = this.getURLinfo('company')
     this.selectMode = state.employeeList.selectMode
     this.needRenewal = state.employeeList.needRenewal
   }

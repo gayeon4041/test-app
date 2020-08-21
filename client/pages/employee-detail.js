@@ -1,10 +1,11 @@
-import { PageView, store, navigate } from '@things-factory/shell'
+import { PageView, store, navigate, client } from '@things-factory/shell'
 import { css, html } from 'lit-element'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 
 import '../components/test-app-title'
 import { UPDATE_DETAIL_INFO, RENEWAL_LIST } from '../actions/employee-list'
-
+import gql from 'graphql-tag'
+import { getURLinfo } from '../utils/get-url'
 class EmployeeDetail extends connect(store)(PageView) {
   static get styles() {
     return css`
@@ -95,7 +96,8 @@ class EmployeeDetail extends connect(store)(PageView) {
       item: Object,
       fields: Array,
       updateFunction: Function,
-      deleteFunction: Function
+      deleteFunction: Function,
+      itemId: String
     }
   }
 
@@ -122,7 +124,7 @@ class EmployeeDetail extends connect(store)(PageView) {
 
     return html`
       <section>
-        <test-app-title title="HatioLab Employee"></test-app-title>
+        <test-app-title title="${this.item.name} details"></test-app-title>
         ${editingTemplate}
       </section>
     `
@@ -135,6 +137,32 @@ class EmployeeDetail extends connect(store)(PageView) {
     this.fields = []
   }
 
+  updated(changed) {
+    if (changed.has('active') && this.active) {
+      this.itemId = getURLinfo('id')
+      this.viewEmployeeDetail([this.itemId])
+    }
+  }
+
+  async viewEmployeeDetail(itemIds) {
+    const response = await client.query({
+      query: gql`
+        query($itemIds: [String]) {
+          employees(ids: $itemIds) {
+            id
+            name
+            email
+            age
+          }
+        }
+      `,
+      variables: {
+        itemIds
+      }
+    })
+
+    this.item = response.data.employees[0]
+  }
   //form 정보를 객체(updateObj)로 받아오기
   serialize() {
     const form = this.renderRoot.querySelector('#editForm')
