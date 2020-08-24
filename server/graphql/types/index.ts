@@ -1,4 +1,5 @@
 import { Company } from './company/company'
+import { CompanyInput } from './company/company-input'
 import { Employee } from './employee/employee'
 import { EmployeeInput } from './employee/employee-input'
 // -------------------------------------------------
@@ -33,7 +34,8 @@ export const mutations = [
   /* GraphQL */ `
   createOrUpdateEmployee(employee: EmployeeInput): Employee
   deleteEmployee(ids: [String]): [Employee]
+  createCompany(company: CompanyInput): Company
   `
 ]
 
-export const types = [Company, Employee, EmployeeInput]
+export const types = [Company, CompanyInput, Employee, EmployeeInput]

@@ -1,9 +1,10 @@
 import { PageView, store, navigate, client } from '@things-factory/shell'
 import { css, html } from 'lit-element'
 import { connect } from 'pwa-helpers/connect-mixin.js'
-import { GET_COMPANY_ID } from '../actions/employee-list'
+
 import '../components/test-app-title'
 import '../components/search-item'
+import '../components/add-item'
 
 import gql from 'graphql-tag'
 
@@ -29,8 +30,8 @@ class CompanyMain extends connect(store)(PageView) {
         border: 0;
         outline: 0;
         border-radius: 5px;
-        padding: 10px;
-        margin-bottom: 10px;
+        padding: 5px;
+
         background-color: #ef5956;
         color: #ffffff;
         font-weight: 700;
@@ -46,6 +47,18 @@ class CompanyMain extends connect(store)(PageView) {
     }
   }
   render() {
+    const companyFields = [
+      {
+        name: 'name',
+        type: 'text',
+        display: true
+      },
+      {
+        name: 'description',
+        type: 'text',
+        display: true
+      }
+    ]
     return html`
       <section>
         <test-app-title title="Companies"></test-app-title>
@@ -53,7 +66,7 @@ class CompanyMain extends connect(store)(PageView) {
           .searchFunction=${async searchObj => {
             this.searchName = searchObj.search
             console.log(this.searchName)
-            await this.getCompany(this.searchName)
+            await this.getCompany({ name: this.searchName })
           }}
         ></search-item>
         <button @click=${this.sortFunction}>이름순으로 정렬하기</button>
@@ -68,6 +81,18 @@ class CompanyMain extends connect(store)(PageView) {
             `
           )}
         </ul>
+        <add-item
+          .fields=${companyFields}
+          .addItemList=${async addObj => {
+            const { name, description } = addObj
+            const parsedNewEmployeeObj = {
+              name,
+              description
+            }
+            await this.createCompany(parsedNewEmployeeObj)
+            await this.getCompany({})
+          }}
+        ></add-item>
       </section>
     `
   }
@@ -79,7 +104,7 @@ class CompanyMain extends connect(store)(PageView) {
   }
 
   firstUpdated() {
-    this.getCompany()
+    this.getCompany({})
   }
 
   companyToEmployees(e) {
@@ -98,12 +123,12 @@ class CompanyMain extends connect(store)(PageView) {
     else {
       sort = 'DESC'
     }
-    console.log(this.searchName)
-    this.getCompany(this.searchName, sort)
+
+    this.getCompany({ name: this.searchName, sort })
     this.sortOption = !this.sortOption
   }
 
-  async getCompany(name, sort) {
+  async getCompany({ name, sort }) {
     const response = await client.query({
       query: gql`
         query($name: String, $sort: String) {
@@ -120,6 +145,24 @@ class CompanyMain extends connect(store)(PageView) {
     })
 
     this.companies = response.data.companies
+  }
+
+  async createCompany(newCompany) {
+    const response = await client.mutate({
+      mutation: gql`
+        mutation createCompany($newCompany: CompanyInput) {
+          createCompany(company: $newCompany) {
+            name
+            description
+          }
+        }
+      `,
+      variables: {
+        newCompany
+      }
+    })
+
+    return response.data.createOrUpdateEmployee
   }
 }
 

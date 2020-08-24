@@ -48,7 +48,7 @@ export class AddItem extends LitElement {
     return {
       fields: Array,
       defaultValues: Object,
-      addEmployee: Function
+      addItemList: Function
     }
   }
 
@@ -93,7 +93,7 @@ export class AddItem extends LitElement {
       }
     }
     if (successForm) {
-      await this.addEmployee(addObj)
+      await this.addItemList(addObj)
       form.reset()
     }
   }

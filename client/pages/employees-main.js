@@ -11,8 +11,8 @@ import gql from 'graphql-tag'
 
 import { showSnackbar } from '@things-factory/layout-base'
 
-import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST, GET_COMPANY_ID } from '../actions/employee-list'
-import { getURLinfo } from '../utils/get-url'
+import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST } from '../actions/employee-list'
+import { getUrlInfo } from '../utils/get-url'
 
 class EmployeesMain extends connect(store)(PageView) {
   static get styles() {
@@ -200,7 +200,7 @@ class EmployeesMain extends connect(store)(PageView) {
         <add-item
           .fields=${addFieldOptions}
           .defaultValues=${this.defaultValues}
-          .addEmployee=${async addObj => {
+          .addItemList=${async addObj => {
             const { name, email, age, companyId } = addObj
             const parsedNewEmployeeObj = {
               name,
@@ -248,7 +248,7 @@ class EmployeesMain extends connect(store)(PageView) {
       })
     }
     if (changed.has('active') && this.active) {
-      this.companyName = getURLinfo('company')
+      this.companyName = getUrlInfo('company')
     }
   }
 

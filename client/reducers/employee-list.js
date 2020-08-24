@@ -1,10 +1,10 @@
-import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, UPDATE_DETAIL_INFO, RENEWAL_LIST } from '../actions/employee-list'
+import { UPDATE_SELECT_MODE, UPDATE_SELECT_ALL_MODE, RENEWAL_LIST, FUNCTION_LIST } from '../actions/employee-list'
 
 const INITIAL_STATE = {
   selectMode: false,
   selectAll: false,
-  detailInfo: {},
-  needRenewal: false
+  needRenewal: false,
+  functionObj: {}
 }
 
 const employeeList = (state = INITIAL_STATE, action) => {
@@ -15,11 +15,11 @@ const employeeList = (state = INITIAL_STATE, action) => {
     case UPDATE_SELECT_ALL_MODE:
       return { ...state, selectAll: action.selectAll }
 
-    case UPDATE_DETAIL_INFO:
-      return { ...state, detailInfo: action.detailInfo }
-
     case RENEWAL_LIST:
       return { ...state, needRenewal: action.needRenewal }
+
+    case FUNCTION_LIST:
+      return { ...state, functionObj: action.functionObj }
 
     default:
       return state

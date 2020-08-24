@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit-element'
 import { connect } from 'pwa-helpers/connect-mixin.js'
 import { store, navigate } from '@things-factory/shell'
-import { UPDATE_DETAIL_INFO } from '../actions/employee-list'
+import { FUNCTION_LIST } from '../actions/employee-list'
 
 export class EditableListItem extends connect(store)(LitElement) {
   static get styles() {
@@ -101,6 +101,13 @@ export class EditableListItem extends connect(store)(LitElement) {
   }
 
   navigateToDetail() {
+    store.dispatch({
+      type: FUNCTION_LIST,
+      functionObj: {
+        update: this.updateFunction,
+        delete: this.deleteFunction
+      }
+    })
     navigate(`employee-detail?id=${this.item.id}`)
   }
 
