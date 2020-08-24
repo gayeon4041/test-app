@@ -14,6 +14,7 @@ class CompanyMain extends connect(store)(PageView) {
       :host {
         display: flex;
         flex-direction: column;
+        justify-content: flex-start;
         align-items: center;
       }
       ul {
@@ -31,10 +32,27 @@ class CompanyMain extends connect(store)(PageView) {
         outline: 0;
         border-radius: 5px;
         padding: 5px;
-
         background-color: #ef5956;
         color: #ffffff;
         font-weight: 700;
+      }
+      .company-list {
+        width: 500px;
+        height: 300px;
+        overflow: auto;
+        border: 1px solid #ef5956;
+        margin-bottom: 10px;
+      }
+      hr {
+        width: 90%;
+      }
+      li button {
+        border: 0;
+        outline: 0;
+        background-color: #ffffff;
+        color: #ef5956;
+        margin: 0;
+        padding: 0;
       }
     `
   }
@@ -70,17 +88,20 @@ class CompanyMain extends connect(store)(PageView) {
           }}
         ></search-item>
         <button @click=${this.sortFunction}>이름순으로 정렬하기</button>
-        <ul>
-          ${this.companies.map(
-            company => html`
-              <li>
-                <button name=${company.name} value=${company.id} @click=${this.companyToEmployees}>
-                  ${company.name}
-                </button>
-              </li>
-            `
-          )}
-        </ul>
+        <div class="company-list">
+          <ul>
+            ${this.companies.map(
+              company => html`
+                <li>
+                  <button name=${company.name} value=${company.id} @click=${this.companyToEmployees}>
+                    ${company.name}
+                  </button>
+                </li>
+                <hr />
+              `
+            )}
+          </ul>
+        </div>
         <add-item
           .fields=${companyFields}
           .addItemList=${async addObj => {
@@ -135,6 +156,7 @@ class CompanyMain extends connect(store)(PageView) {
           companies(name: $name, sortOption: $sort) {
             id
             name
+            createdAt
           }
         }
       `,
@@ -145,6 +167,8 @@ class CompanyMain extends connect(store)(PageView) {
     })
 
     this.companies = response.data.companies
+
+    console.log(this.companies)
   }
 
   async createCompany(newCompany) {

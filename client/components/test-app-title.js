@@ -5,6 +5,7 @@ export class TestAppTitle extends LitElement {
     return css`
       h1 {
         color: #ef5956;
+        text-align: center;
       }
     `
   }
