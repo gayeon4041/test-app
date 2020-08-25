@@ -31,7 +31,8 @@
   },
   "dependencies": {
     "@things-factory/layout-ui": "^2.1.0",
-    "@things-factory/shell": "*"
+    "@things-factory/shell": "*",
+    "moment": "^2.27.0"
   },
   "devDependencies": {}
 }

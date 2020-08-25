@@ -65,7 +65,7 @@ class EmployeeDetail extends connect(store)(PageView) {
 
     return html`
       <section>
-        <test-app-title title="${this.employeeItem.name} details"></test-app-title>
+        <test-app-title title="${this.employeeItem.name}'s details"></test-app-title>
         <edit-form-item
           .fields=${employeeEditFields}
           .item=${this.employeeItem}

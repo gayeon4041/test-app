@@ -25,12 +25,14 @@ export class EditFormItem extends LitElement {
 
       .btn-container button {
         width: 100%;
+        margin: 1px;
       }
 
       .form-container {
         border: 3px solid #ed6856;
         border-radius: 8px;
         padding: 20px;
+        width: 300px;
       }
 
       label input {
@@ -38,11 +40,15 @@ export class EditFormItem extends LitElement {
         border: none;
         background-color: #fdf5e6;
         padding: 5px;
+        width: auto;
+      }
+
+      #edit-form {
+        width: 100%;
       }
 
       #edit-form input {
-        margin-bottom: 20px;
-        margin-top: 10px;
+        margin: 20px 0;
       }
 
       button {
@@ -85,11 +91,14 @@ export class EditFormItem extends LitElement {
           ${this.fields.map(
             f =>
               html`
-                <label .hidden=${!f.display}
-                  >${f.name}: <input type=${f.type} name=${f.name} .value=${this.item[f.name]}
-                /></label>
+                <div>
+                  <label .hidden=${!f.display}
+                    >${f.name}: <input type=${f.type} name=${f.name} .value=${this.item[f.name]}
+                  /></label>
+                </div>
               `
           )}
+
           <input class="submit-btn" type="submit" value="save" />
         </form>
         <div class="btn-container">

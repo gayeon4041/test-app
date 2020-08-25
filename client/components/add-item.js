@@ -27,7 +27,7 @@ export class AddItem extends LitElement {
       }
 
       form input {
-        border: 1px solid #dbc5b0;
+        border: 1px solid #ef5956;
         border-radius: 5px;
       }
 
@@ -41,6 +41,11 @@ export class AddItem extends LitElement {
         border-radius: 8px;
         font-weight: 700;
       }
+
+      h3 {
+        margin: 5px;
+        color: #ef5956;
+      }
     `
   }
 
@@ -48,22 +53,26 @@ export class AddItem extends LitElement {
     return {
       fields: Array,
       defaultValues: Object,
-      addItemList: Function
+      addItemList: Function,
+      addFormName: String
     }
   }
 
   render() {
     return html`
       <form id="add-form" @submit=${this.addFunction}>
-        ${this.fields.map(
-          f =>
-            html`
-              <label ?hidden=${!f.display}
-                >${f.name}:
-                <input type=${f.type} name=${f.name} .value=${this.defaultValues[f.name] ?? ''} />
-              </label>
-            `
-        )}
+        <h3>Add ${this.addFormName}</h3>
+        <div>
+          ${this.fields.map(
+            f =>
+              html`
+                <label ?hidden=${!f.display}
+                  >${f.name}:
+                  <input type=${f.type} name=${f.name} .value=${this.defaultValues[f.name] ?? ''} />
+                </label>
+              `
+          )}
+        </div>
         <input class="create-button" type="submit" value="create" />
       </form>
     `

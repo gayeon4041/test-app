@@ -7,6 +7,7 @@ import '../components/search-item'
 import '../components/add-item'
 
 import gql from 'graphql-tag'
+import * as moment from 'moment'
 
 class CompanyMain extends connect(store)(PageView) {
   static get styles() {
@@ -14,9 +15,16 @@ class CompanyMain extends connect(store)(PageView) {
       :host {
         display: flex;
         flex-direction: column;
+      }
+
+      section {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
         justify-content: flex-start;
         align-items: center;
       }
+
       ul {
         list-style: none;
         display: flex;
@@ -24,9 +32,23 @@ class CompanyMain extends connect(store)(PageView) {
         align-items: center;
         padding: 0;
       }
+
       li {
-        margin-bottom: 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        width: 100%;
+        margin-bottom: 5px;
       }
+
+      li span {
+        text-align: center;
+        color: #433c3c;
+      }
+
+      .sort-btn {
+        display: flex;
+      }
+
       button {
         border: 0;
         outline: 0;
@@ -35,24 +57,35 @@ class CompanyMain extends connect(store)(PageView) {
         background-color: #ef5956;
         color: #ffffff;
         font-weight: 700;
+        cursor: pointer;
       }
+
       .company-list {
         width: 500px;
         height: 300px;
         overflow: auto;
-        border: 1px solid #ef5956;
+        border: 3px solid #ef5956;
         margin-bottom: 10px;
+        border-radius: 5px;
       }
+
       hr {
-        width: 90%;
+        width: 99%;
       }
+
       li button {
         border: 0;
         outline: 0;
         background-color: #ffffff;
-        color: #ef5956;
+        color: #bc6d6d;
         margin: 0;
         padding: 0;
+        font-size: 16px;
+      }
+
+      .table-header span {
+        color: #ef5956;
+        font-weight: 700;
       }
     `
   }
@@ -60,7 +93,7 @@ class CompanyMain extends connect(store)(PageView) {
     return {
       companies: Array,
       sortFunction: Function,
-      sortOption: Boolean,
+      sortOption: Object,
       searchName: String
     }
   }
@@ -77,27 +110,35 @@ class CompanyMain extends connect(store)(PageView) {
         display: true
       }
     ]
+
     return html`
       <section>
         <test-app-title title="Companies"></test-app-title>
         <search-item
           .searchFunction=${async searchObj => {
             this.searchName = searchObj.search
-            console.log(this.searchName)
             await this.getCompany({ name: this.searchName })
           }}
         ></search-item>
-        <button @click=${this.sortFunction}>이름순으로 정렬하기</button>
+        <div class="sort-btn">
+          <button @click=${this.sortFunction} value="name">이름순으로 정렬하기</button>
+          <button @click=${this.sortFunction} value="createdAt">날짜순으로 정렬하기</button>
+        </div>
         <div class="company-list">
           <ul>
+            <li class="table-header"><span>company</span> <span>date</span> <span>employeesNumber</span></li>
+            <hr />
             ${this.companies.map(
               company => html`
                 <li>
-                  <button name=${company.name} value=${company.id} @click=${this.companyToEmployees}>
-                    ${company.name}
-                  </button>
+                  <span>
+                    <button name=${company.name} value=${company.id} @click=${this.companyToEmployees}>
+                      ${company.name}
+                    </button>
+                  </span>
+                  <span>${this.changeDate(company.createdAt)}</span>
+                  <span>${company.employees.length}</span>
                 </li>
-                <hr />
               `
             )}
           </ul>
@@ -113,6 +154,7 @@ class CompanyMain extends connect(store)(PageView) {
             await this.createCompany(parsedNewEmployeeObj)
             await this.getCompany({})
           }}
+          addFormName="Company"
         ></add-item>
       </section>
     `
@@ -122,6 +164,7 @@ class CompanyMain extends connect(store)(PageView) {
     super()
     this.companies = []
     this.searchName = ''
+    this.sortOption = {}
   }
 
   firstUpdated() {
@@ -134,29 +177,37 @@ class CompanyMain extends connect(store)(PageView) {
     navigate(`employees-main?company=${companyName}`)
   }
 
-  sortFunction() {
-    let sort
-    // sortOption이 true이면 오름차순
-    if (this.sortOption) {
-      sort = 'ASC'
-    }
-    // sortOption이 false이면 내림차순
-    else {
-      sort = 'DESC'
+  sortFunction(e) {
+    let sort = e.target.value
+
+    if (!this.sortOption[sort] || this.sortOption[sort] === 'ASC') {
+      this.sortOption = {}
+      this.sortOption[sort] = 'DESC'
+    } else {
+      this.sortOption = {}
+      this.sortOption[sort] = 'ASC'
     }
 
-    this.getCompany({ name: this.searchName, sort })
-    this.sortOption = !this.sortOption
+    this.getCompany({ name: this.searchName, sort: this.sortOption })
+  }
+
+  changeDate(num) {
+    let companyDay = new Date(num * 1)
+
+    return moment(companyDay).format('YYYY.MM.DD')
   }
 
   async getCompany({ name, sort }) {
     const response = await client.query({
       query: gql`
-        query($name: String, $sort: String) {
+        query($name: String, $sort: SortCompany) {
           companies(name: $name, sortOption: $sort) {
             id
             name
             createdAt
+            employees {
+              name
+            }
           }
         }
       `,

@@ -37,11 +37,12 @@ class EmployeesMain extends connect(store)(PageView) {
         margin: auto;
         border: 3px solid #ed6856;
         border-radius: 8px;
-        margin: 20px;
+        margin-bottom: 20px;
         padding: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
+        width: 300px;
       }
 
       li {
@@ -65,10 +66,6 @@ class EmployeesMain extends connect(store)(PageView) {
 
       .select-btns {
         display: flex;
-      }
-
-      .select-btns button:first-child {
-        margin-right: 20px;
       }
     `
   }
@@ -213,6 +210,7 @@ class EmployeesMain extends connect(store)(PageView) {
             this.addEmployeeSnackbar(name)
             await this.refresh(this.companyName)
           }}
+          addFormName="Employee"
         ></add-item>
       </section>
     `

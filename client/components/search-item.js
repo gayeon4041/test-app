@@ -4,25 +4,30 @@ export class SearchItem extends LitElement {
   static get styles() {
     return css`
       label {
-        color: #fab4b4;
+        color: #ef5956;
+        font-weight: 700;
       }
       input {
         padding: 7px 5px;
         margin-bottom: 5px;
-        border-radius: 2px;
+        border-radius: 5px;
       }
       .text-btn {
-        border: 1px solid #fab4b4;
+        border: 1px solid #ef5956;
       }
       .submit-btn {
-        background-color: #fab4b4;
+        background-color: #ef5956;
         color: #ffffff;
         outline: 0;
-        border: 0;
+        border: 1px solid #ef5956;
+        font-weight: 700;
       }
       form {
         display: flex;
         justify-content: center;
+      }
+      div {
+        margin-bottom: 10px;
       }
     `
   }

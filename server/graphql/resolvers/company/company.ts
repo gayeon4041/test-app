@@ -2,11 +2,8 @@ import { Company } from '../../../entities'
 import { Like } from 'typeorm'
 
 export const companyResolver = {
-  async companies(
-    _: any,
-    { id, name, sortOption }: { id?: string; name?: string; sortOption?: Record<string, any>; 
-  ) {
-    const findCondition: Record<string, any> = {}
+  async companies(_: any, { id, name, sortOption }: { id?: string; name?: string; sortOption?: Record<string, any> }) {
+    let findCondition: Record<string, any> = {}
     let whereCondition
 
     if (id) {
@@ -34,8 +31,7 @@ export const companyResolver = {
     }
 
     if (sortOption) {
-      
-      findCondition.order = [{ createdAt: sortOption }, { name: sortOption }]
+      findCondition = { ...findCondition, order: sortOption }
     }
 
     return await Company.find(findCondition)
