@@ -200,7 +200,7 @@ class CompanyMain extends connect(store)(PageView) {
   async getCompany({ name, sort }) {
     const response = await client.query({
       query: gql`
-        query($name: String, $sort: SortCompany) {
+        query($name: String, $sort: CompanySortType) {
           companies(name: $name, sortOption: $sort) {
             id
             name

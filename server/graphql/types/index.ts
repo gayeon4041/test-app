@@ -2,7 +2,9 @@ import { Company } from './company/company'
 import { CompanyInput } from './company/company-input'
 import { Employee } from './employee/employee'
 import { EmployeeInput } from './employee/employee-input'
-import { SortCompany } from './company/sort-company'
+import { CompanySortType, CompanySortDirection } from './company/company-sort-type'
+import { EmployeeSortType, EmployeesSortDirection } from './employee/employee-sort-type'
+
 // -------------------------------------------------
 
 // import * as CommonCode from './common-code'
@@ -27,7 +29,8 @@ import { SortCompany } from './company/sort-company'
 export const queries = [
   /* GraphQL */ `
   employees(ids:[String], name: String): [Employee]
-  companies(id: String, name: String, sortOption: SortCompany): [Company]
+  sortEmployees(sortOption: EmployeeSortType): [Employee]
+  companies(id: String, name: String, sortOption: CompanySortType): [Company]
   `
 ]
 
@@ -39,4 +42,13 @@ export const mutations = [
   `
 ]
 
-export const types = [Company, CompanyInput, SortCompany, Employee, EmployeeInput]
+export const types = [
+  Company,
+  CompanyInput,
+  CompanySortType,
+  CompanySortDirection,
+  Employee,
+  EmployeeInput,
+  EmployeeSortType,
+  EmployeesSortDirection
+]

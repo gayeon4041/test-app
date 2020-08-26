@@ -18,7 +18,8 @@ import { companyResolver } from './company/company'
 import { companySubQuery } from './company/company-sub-query'
 import { employeesSubQuery } from './employee/employees-sub-query'
 import { createCompanyResolver } from './company/create-company'
+import { sortEmployeesResolver } from './employee/sort-employees'
 
-export const queries = [employeesResolver, companyResolver, companySubQuery, employeesSubQuery]
+export const queries = [employeesResolver, companyResolver, companySubQuery, employeesSubQuery, sortEmployeesResolver]
 
 export const mutations = [createOrUpdateEmployeeResolver, deleteEmployeeResolver, createCompanyResolver]

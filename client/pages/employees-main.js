@@ -57,7 +57,7 @@ class EmployeesMain extends connect(store)(PageView) {
         border: 0;
         outline: 0;
         border-radius: 5px;
-        padding: 10px;
+        padding: 5px;
         margin-bottom: 10px;
         background-color: #ef5956;
         color: #ffffff;
@@ -162,6 +162,10 @@ class EmployeesMain extends connect(store)(PageView) {
             ? html` <button @click=${this.selectAllList}>select all</button>
                 <button @click=${this.exitSelectMode}>cancel</button>`
             : html`<button @click=${this.enterSelectMode}>select</button>`}
+        </div>
+        <div class="sort-btn">
+          <button>이름순으로 정렬하기</button>
+          <button>나이순으로 정렬하기</button>
         </div>
         <ul>
           ${this.employees.map(
