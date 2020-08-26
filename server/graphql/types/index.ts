@@ -28,8 +28,7 @@ import { EmployeeSortType, EmployeesSortDirection } from './employee/employee-so
 // ------------------------------------------
 export const queries = [
   /* GraphQL */ `
-  employees(ids:[String], name: String): [Employee]
-  sortEmployees(sortOption: EmployeeSortType): [Employee]
+  employees(ids:[String], name: String, sortOption: EmployeeSortType): [Employee]
   companies(id: String, name: String, sortOption: CompanySortType): [Company]
   `
 ]

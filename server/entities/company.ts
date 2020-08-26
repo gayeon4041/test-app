@@ -9,6 +9,9 @@ export class Company extends BaseEntity {
   name: string
 
   @Column({ nullable: true })
+  toLowerName: string
+
+  @Column({ nullable: true })
   description: string
 
   @CreateDateColumn()

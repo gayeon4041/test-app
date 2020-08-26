@@ -11,5 +11,6 @@ export const CompanySortType = gql`
   input CompanySortType {
     name: CompanySortDirection
     createdAt: CompanySortDirection
+    toLowerName: CompanySortDirection
   }
 `

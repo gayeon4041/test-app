@@ -4,5 +4,6 @@ export const CompanyInput = gql`
   input CompanyInput {
     name: String!
     description: String
+    toLowerName: String
   }
 `

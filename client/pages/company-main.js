@@ -121,7 +121,7 @@ class CompanyMain extends connect(store)(PageView) {
           }}
         ></search-item>
         <div class="sort-btn">
-          <button @click=${this.sortFunction} value="name">이름순으로 정렬하기</button>
+          <button @click=${this.sortFunction} value="toLowerName">이름순으로 정렬하기</button>
           <button @click=${this.sortFunction} value="createdAt">날짜순으로 정렬하기</button>
         </div>
         <div class="company-list">
@@ -146,9 +146,10 @@ class CompanyMain extends connect(store)(PageView) {
         <add-item
           .fields=${companyFields}
           .addItemList=${async addObj => {
-            const { name, description } = addObj
+            const { name, description, toLowerName } = addObj
             const parsedNewEmployeeObj = {
               name,
+              toLowerName,
               description
             }
             await this.createCompany(parsedNewEmployeeObj)

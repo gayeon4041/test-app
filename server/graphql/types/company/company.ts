@@ -5,7 +5,8 @@ export const Company = gql`
     id: String
     name: String
     description: String
-    employees(name: String): [Employee]
+    toLowerName: String
+    employees(name: String, sortOption: EmployeeSortType): [Employee]
     createdAt: String
     updatedAt: String
   }

@@ -91,7 +91,8 @@ export class AddItem extends LitElement {
     const form = this.renderRoot.querySelector('#add-form')
     const formData = new FormData(form)
 
-    const addObj = await Object.fromEntries(formData.entries())
+    let addObj = await Object.fromEntries(formData.entries())
+    addObj = { ...addObj, toLowerName: addObj.name.toLowerCase() }
 
     console.log(addObj)
     let successForm = true

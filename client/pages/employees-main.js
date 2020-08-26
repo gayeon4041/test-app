@@ -78,7 +78,8 @@ class EmployeesMain extends connect(store)(PageView) {
       needRenewal: Boolean,
       companyId: String,
       companyName: String,
-      defaultValues: Object
+      defaultValues: Object,
+      sortOption: Boolean
     }
   }
 
@@ -164,8 +165,8 @@ class EmployeesMain extends connect(store)(PageView) {
             : html`<button @click=${this.enterSelectMode}>select</button>`}
         </div>
         <div class="sort-btn">
-          <button>이름순으로 정렬하기</button>
-          <button>나이순으로 정렬하기</button>
+          <button @click=${this.sortFunction} value="name">이름순으로 정렬하기</button>
+          <button @click=${this.sortFunction} value="age">나이순으로 정렬하기</button>
         </div>
         <ul>
           ${this.employees.map(
@@ -229,6 +230,7 @@ class EmployeesMain extends connect(store)(PageView) {
 
     this.companyName = ''
     this.defaultValues = {}
+    this.sortOption = {}
   }
 
   updated(changed) {
@@ -349,7 +351,47 @@ class EmployeesMain extends connect(store)(PageView) {
     return checked
   }
 
+  sortFunction(e) {
+    let sort = e.target.value
+
+    if (!this.sortOption[sort] || this.sortOption[sort] === 'ASC') {
+      this.sortOption = {}
+      this.sortOption[sort] = 'DESC'
+    } else {
+      this.sortOption = {}
+      this.sortOption[sort] = 'ASC'
+    }
+
+    this.sortEmployees(this.sortOption)
+  }
+
   //graphql 데이터 불러오기
+  async sortEmployees(sortOption) {
+    const response = await client.query({
+      query: gql`
+        query($sortOption: EmployeeSortType) {
+          companies(name: $companyName) {
+            id
+            name
+            sortEmployees(name: $employeesName) {
+              id
+              name
+              email
+              age
+            }
+          }
+        }
+      `,
+      variables: {
+        sortOption
+      }
+    })
+
+    let company = response.data.companies[0]
+
+    this.employees = company.employees
+    this.companyId = company.id
+  }
 
   async refresh(companyName, employeesName) {
     const response = await client.query({

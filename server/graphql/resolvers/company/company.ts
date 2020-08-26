@@ -31,8 +31,14 @@ export const companyResolver = {
     }
 
     if (sortOption) {
-      findCondition = { ...findCondition, order: sortOption }
+      findCondition = { ...findCondition, order: { ...sortOption } }
     }
+
+    // const qb = await Company.createQueryBuilder()
+    // qb
+    //   .select('*')
+    //   .addSelect('lowercase(name) as lower_name')
+    //   .orderBy('lower_name', 'ASC')
 
     return await Company.find(findCondition)
   }
