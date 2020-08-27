@@ -1,14 +1,17 @@
 import { Company, Employee } from '../../../entities'
 import { Like } from 'typeorm'
+import { EmployeesSortDirection } from 'server/graphql/types/employee/employee-sort-type'
+import { employeesSubQuery } from '../employee/employees-sub-query'
 
 export const companySubQuery = {
   Company: {
     async employees(company: Company, { name, sortOption }: Record<string, any>) {
-      let findCondition: Record<string, any> = { company }
-      console.log(findCondition)
+      let findCondition: Record<string, any> = {
+        where: { company }
+      }
+
       if (name) {
-        findCondition.name = Like(`%${name}%`)
-        console.log(findCondition)
+        findCondition.where.name = Like(`%{name}%`)
       }
 
       if (sortOption) {

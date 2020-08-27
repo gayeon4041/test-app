@@ -155,7 +155,7 @@ class EmployeesMain extends connect(store)(PageView) {
         <search-item
           .fields=${fieldOptions}
           .searchFunction=${async searchObj => {
-            await this.refresh(this.companyName, searchObj.search)
+            await this.refresh({ companyName: this.companyName, employeesName: searchObj.search })
           }}
         ></search-item>
         <div class="select-btns">
@@ -213,7 +213,7 @@ class EmployeesMain extends connect(store)(PageView) {
             await this.createOrUpdateEmployee(parsedNewEmployeeObj)
 
             this.addEmployeeSnackbar(name)
-            await this.refresh(this.companyName)
+            await this.refresh({ companyName: this.companyName })
           }}
           addFormName="Employee"
         ></add-item>
@@ -235,7 +235,7 @@ class EmployeesMain extends connect(store)(PageView) {
 
   updated(changed) {
     if (changed.has('needRenewal') && this.needRenewal) {
-      this.refresh(this.companyName)
+      this.refresh({ companyName: this.companyName })
     }
 
     if (changed.has('companyId') && this.companyId) {
@@ -339,7 +339,7 @@ class EmployeesMain extends connect(store)(PageView) {
       let deletedEmployees = await this.deleteEmployee(idList)
       this.selectedItemsDeleteSnackbar(deletedEmployees)
 
-      await this.refresh(this.companyName)
+      await this.refresh({ companyName: this.companyName })
     }
   }
 
@@ -362,45 +362,18 @@ class EmployeesMain extends connect(store)(PageView) {
       this.sortOption[sort] = 'ASC'
     }
 
-    this.sortEmployees(this.sortOption)
+    this.refresh({ companyName: this.companyName, employeesName: this.employeesName, sort: this.sortOption })
   }
 
   //graphql 데이터 불러오기
-  async sortEmployees(sortOption) {
+  async refresh({ companyName, employeesName, sort }) {
     const response = await client.query({
       query: gql`
-        query($sortOption: EmployeeSortType) {
+        query($companyName: String, $employeesName: String, $sort: EmployeeSortType) {
           companies(name: $companyName) {
             id
             name
-            sortEmployees(name: $employeesName) {
-              id
-              name
-              email
-              age
-            }
-          }
-        }
-      `,
-      variables: {
-        sortOption
-      }
-    })
-
-    let company = response.data.companies[0]
-
-    this.employees = company.employees
-    this.companyId = company.id
-  }
-
-  async refresh(companyName, employeesName) {
-    const response = await client.query({
-      query: gql`
-        query($companyName: String, $employeesName: String) {
-          companies(name: $companyName) {
-            id
-            name
-            employees(name: $employeesName) {
+            employees(name: $employeesName, sortOption: $sort) {
               id
               name
               email
@@ -411,7 +384,8 @@ class EmployeesMain extends connect(store)(PageView) {
       `,
       variables: {
         companyName,
-        employeesName
+        employeesName,
+        sort
       }
     })
 
