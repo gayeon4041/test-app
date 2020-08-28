@@ -11,7 +11,7 @@ export const companySubQuery = {
       }
 
       if (name) {
-        findCondition.where.name = Like(`%{name}%`)
+        findCondition.where.name = Like(`%${name}%`)
       }
 
       if (sortOption) {

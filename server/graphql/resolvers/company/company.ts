@@ -6,6 +6,8 @@ export const companyResolver = {
     let findCondition: Record<string, any> = {}
     let whereCondition
 
+    findCondition.order = { createdAt: 'ASC' }
+
     if (id) {
       return await Company.findByIds([id])
     }
@@ -31,7 +33,7 @@ export const companyResolver = {
     }
 
     if (sortOption) {
-      findCondition = { ...findCondition, order: { ...sortOption } }
+      findCondition.order = sortOption
     }
 
     // const qb = await Company.createQueryBuilder()

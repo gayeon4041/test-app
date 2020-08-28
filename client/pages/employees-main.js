@@ -17,13 +17,7 @@ import { getUrlInfo } from '../utils/get-url'
 class EmployeesMain extends connect(store)(PageView) {
   static get styles() {
     return css`
-      :host {
-        display: flex;
-        flex-direction: column;
-      }
-
       section {
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -32,7 +26,6 @@ class EmployeesMain extends connect(store)(PageView) {
 
       ul {
         list-style: none;
-        flex: 0.5;
         overflow: auto;
         margin: auto;
         border: 3px solid #ed6856;
@@ -43,14 +36,11 @@ class EmployeesMain extends connect(store)(PageView) {
         flex-direction: column;
         align-items: center;
         width: 300px;
+        height: 300px;
       }
 
       li {
         margin-bottom: 10px;
-      }
-
-      add-item {
-        flex: 1;
       }
 
       button {
@@ -79,7 +69,8 @@ class EmployeesMain extends connect(store)(PageView) {
       companyId: String,
       companyName: String,
       defaultValues: Object,
-      sortOption: Boolean
+      sortOption: Boolean,
+      numberOfEmployees: Number
     }
   }
 

@@ -8,6 +8,7 @@ import '../components/add-item'
 
 import gql from 'graphql-tag'
 import * as moment from 'moment'
+import { getUrlInfo } from '../utils/get-url'
 
 class CompanyMain extends connect(store)(PageView) {
   static get styles() {
@@ -117,6 +118,8 @@ class CompanyMain extends connect(store)(PageView) {
         <search-item
           .searchFunction=${async searchObj => {
             this.searchName = searchObj.search
+            navigate(`/company-main?search=${this.searchName}`)
+
             await this.getCompany({ name: this.searchName })
           }}
         ></search-item>
@@ -168,8 +171,11 @@ class CompanyMain extends connect(store)(PageView) {
     this.sortOption = {}
   }
 
-  firstUpdated() {
-    this.getCompany({})
+  updated(changed) {
+    if (changed.has('active') && this.active) {
+      const searchItem = getUrlInfo('search')
+      this.getCompany({ name: searchItem })
+    }
   }
 
   companyToEmployees(e) {
