@@ -122,6 +122,7 @@ class CompanyMain extends connect(store)(PageView) {
 
             await this.getCompany({ name: this.searchName })
           }}
+          .searchName=${this.searchName}
         ></search-item>
         <div class="sort-btn">
           <button @click=${this.sortFunction} value="toLowerName">이름순으로 정렬하기</button>
@@ -173,8 +174,8 @@ class CompanyMain extends connect(store)(PageView) {
 
   updated(changed) {
     if (changed.has('active') && this.active) {
-      const searchItem = getUrlInfo('search')
-      this.getCompany({ name: searchItem })
+      this.searchName = getUrlInfo('search')
+      this.getCompany({ name: this.searchName })
     }
   }
 

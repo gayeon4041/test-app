@@ -34,7 +34,8 @@ export class SearchItem extends LitElement {
   static get properties() {
     return {
       fields: Array,
-      searchFunction: Function
+      searchFunction: Function,
+      searchName: String
     }
   }
 
@@ -44,7 +45,7 @@ export class SearchItem extends LitElement {
         <form @submit=${this.searchClick}>
           <label
             >name:
-            <input class="text-btn" type="text" name="search" />
+            <input class="text-btn" type="text" name="search" .value=${this.searchName ? `${this.searchName}` : ''} />
             <input class="submit-btn" type="submit" value="search" />
           </label>
         </form>
