@@ -12,15 +12,6 @@ export const companyResolver = {
       return await Company.findByIds([id])
     }
 
-    // sortOption: {name: direction}[]
-    // sortOption: {key: string, direction: 'ASC'|'DESC' }[]
-
-    // [{
-    //   createdAt: 'ASC'
-    // }, {
-    //   name: 'DESC'
-    // }]
-
     if (name) {
       whereCondition = {
         ...whereCondition,

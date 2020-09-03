@@ -87,7 +87,7 @@ export class EditFormItem extends LitElement {
   render() {
     const editingTemplate = html`
       <div class="form-container">
-        <form id="edit-form" @submit=${this.updateBtn}>
+        <form id="edit-form" @submit=${this.updateBtnClickEvent}>
           ${this.fields.map(
             f =>
               html`
@@ -102,8 +102,8 @@ export class EditFormItem extends LitElement {
           <input class="submit-btn" type="submit" value="save" />
         </form>
         <div class="btn-container">
-          <button @click=${this.cancelBtn}>cancel</button>
-          <button @click=${this.deleteBtn}>delete</button>
+          <button @click=${this.cancelBtnClickEvent}>cancel</button>
+          <button @click=${this.deleteBtnClickEvent}>delete</button>
         </div>
       </div>
     `
@@ -122,22 +122,22 @@ export class EditFormItem extends LitElement {
     const form = this.renderRoot.querySelector('#edit-form')
     const formData = new FormData(form)
     const updateObj = Object.fromEntries(formData.entries())
-    console.log(updateObj)
+
     return updateObj
   }
 
-  async updateBtn(e) {
+  async updateBtnClickEvent(e) {
     e.preventDefault()
 
     const item = this.serialize()
     await this.updateItem(item)
   }
 
-  async deleteBtn() {
+  async deleteBtnClickEvent() {
     await this.deleteItem()
   }
 
-  cancelBtn() {
+  cancelBtnClickEvent() {
     this.navigateToMain()
   }
 }

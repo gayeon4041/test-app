@@ -47,7 +47,7 @@ export class SearchItem extends LitElement {
   render() {
     return html`
       <div>
-        <form @submit=${this.searchClick}>
+        <form @submit=${this.searchClickEvent}>
           <label
             >name:
             <input class="text-btn" type="text" name="search" .value=${this.searchName ? `${this.searchName}` : ''} />
@@ -64,7 +64,7 @@ export class SearchItem extends LitElement {
     this.fields = []
   }
 
-  async searchClick(e) {
+  async searchClickEvent(e) {
     e.preventDefault()
 
     const form = this.renderRoot.querySelector('form')
@@ -73,8 +73,6 @@ export class SearchItem extends LitElement {
     const searchObj = await Object.fromEntries(formData.entries())
 
     this.searchFunction(searchObj)
-
-    //form.reset()
   }
 }
 

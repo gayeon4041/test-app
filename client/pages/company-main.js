@@ -160,7 +160,7 @@ class CompanyMain extends connect(store)(PageView) {
             await this.createCompany(parsedNewEmployeeObj)
             await this.getCompany({ name: this.searchName })
           }}
-          addFormName="Company"
+          addFormTitleName="Company"
         ></add-item>
       </section>
     `
@@ -210,6 +210,7 @@ class CompanyMain extends connect(store)(PageView) {
     return moment(companyDay).format('YYYY.MM.DD')
   }
 
+  //companies 데이터 조회 (name: searchName, sort: currentSortOption)
   async getCompany({ name, sort }) {
     const response = await client.query({
       query: gql`
@@ -231,10 +232,9 @@ class CompanyMain extends connect(store)(PageView) {
     })
 
     this.companies = response.data.companies
-
-    console.log(this.companies)
   }
 
+  //company 데이터 생성 obj = {name, toLowerName, description}
   async createCompany(newCompany) {
     const response = await client.mutate({
       mutation: gql`

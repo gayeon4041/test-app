@@ -52,13 +52,13 @@ export class AddItem extends LitElement {
       fields: Array,
       defaultValues: Object,
       addItemList: Function,
-      addFormName: String
+      addFormTitleName: String
     }
   }
 
   render() {
     return html`
-      <h3>Add ${this.addFormName}</h3>
+      <h3>Add ${this.addFormTitleName}</h3>
       <form id="add-form" @submit=${this.addFunction}>
         ${this.fields.map(
           f =>

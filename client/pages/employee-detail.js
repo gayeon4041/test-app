@@ -98,6 +98,7 @@ class EmployeeDetail extends connect(store)(PageView) {
     }
   }
 
+  //employee 데이터 조회
   async viewEmployeeDetail(itemIds) {
     const response = await client.query({
       query: gql`
@@ -122,11 +123,6 @@ class EmployeeDetail extends connect(store)(PageView) {
     this.companyName = this.employeeItem.company.name
   }
 
-  stateChanged(state) {
-    this.updateFunction = state.employeeList.functionObj.update
-    this.deleteFunction = state.employeeList.functionObj.delete
-  }
-
   afterModifying() {
     store.dispatch({
       type: RENEWAL_LIST,
@@ -137,6 +133,11 @@ class EmployeeDetail extends connect(store)(PageView) {
 
   navigateToMain(name) {
     navigate(`employees-main?company=${name}`)
+  }
+
+  stateChanged(state) {
+    this.updateFunction = state.employeeList.functionObj.update
+    this.deleteFunction = state.employeeList.functionObj.delete
   }
 }
 

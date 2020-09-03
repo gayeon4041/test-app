@@ -65,6 +65,7 @@ class EmployeesMain extends connect(store)(PageView) {
 
       .sort-btn button {
         background-color: #7f8fa6;
+        margin-bottom: 0;
       }
     `
   }
@@ -84,6 +85,7 @@ class EmployeesMain extends connect(store)(PageView) {
   }
 
   render() {
+    // display option => editing: 수정가능, plain: 보여지는 item
     const fieldOptions = [
       {
         name: 'id',
@@ -149,6 +151,7 @@ class EmployeesMain extends connect(store)(PageView) {
         display: false
       }
     ]
+
     return html`
       <section>
         <test-app-title title="${this.companyName} Employees"></test-app-title>
@@ -219,7 +222,7 @@ class EmployeesMain extends connect(store)(PageView) {
             this.addEmployeeSnackbar(name)
             await this.refresh({ companyName: this.companyName })
           }}
-          addFormName="Employee"
+          addFormTitleName="Employee"
         ></add-item>
       </section>
     `
@@ -327,6 +330,7 @@ class EmployeesMain extends connect(store)(PageView) {
       selectAll: true
     })
   }
+  //----------------------------------------
 
   getListItems() {
     const listItems = Array.from(this.renderRoot.querySelectorAll('editable-list-item'))
@@ -373,7 +377,7 @@ class EmployeesMain extends connect(store)(PageView) {
     this.refresh({ companyName: this.companyName, employeesName: this.employeesName, sort: currentSortOption })
   }
 
-  //graphql 데이터 불러오기
+  //graphql 데이터 조회
   async refresh({ companyName, employeesName, sort }) {
     const response = await client.query({
       query: gql`
@@ -432,6 +436,7 @@ class EmployeesMain extends connect(store)(PageView) {
     return response.data.createOrUpdateEmployee
   }
 
+  //데이터 삭제
   async deleteEmployee(ids) {
     const response = await client.mutate({
       mutation: gql`

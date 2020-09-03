@@ -111,25 +111,7 @@ export class EditableListItem extends connect(store)(LitElement) {
     navigate(`employee-detail?id=${this.item.id}`)
   }
 
-  //삭제
-  async deleteItem(e) {
-    e.preventDefault()
-
-    const deleteObj = this.serialize()
-    await this.deleteFunction(deleteObj)
-
-    this.quitEditMode()
-  }
-
-  //edit모드 종료
-  quitEditMode() {
-    const form = this.renderRoot.querySelector('#editForm')
-    form.reset()
-
-    this.isEditing = false
-  }
-
-  async stateChanged(state) {
+  stateChanged(state) {
     this.selectMode = state.employeeList.selectMode
     this.selectAll = state.employeeList.selectAll
   }
