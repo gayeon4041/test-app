@@ -6,7 +6,7 @@ export class EditFormItem extends LitElement {
       #edit-form label {
         font-size: 20px;
         font-weight: 700;
-        color: #ef5956;
+        color: #353b48;
       }
 
       #edit-form {
@@ -29,8 +29,8 @@ export class EditFormItem extends LitElement {
       }
 
       .form-container {
-        border: 3px solid #ed6856;
-        border-radius: 8px;
+        border: 3px solid #7f8fa6;
+        border-radius: 5px;
         padding: 20px;
         width: 300px;
       }
@@ -38,9 +38,9 @@ export class EditFormItem extends LitElement {
       label input {
         border-radius: 5px;
         border: none;
-        background-color: #fdf5e6;
+        background-color: #f5f6fa;
         padding: 5px;
-        width: auto;
+        width: 200px;
       }
 
       #edit-form {
@@ -58,7 +58,7 @@ export class EditFormItem extends LitElement {
         margin-right: 5px;
         padding: 5px;
         color: #ffffff;
-        background-color: #ef5956;
+        background-color: #273c75;
         font-weight: 700;
       }
 
@@ -68,7 +68,7 @@ export class EditFormItem extends LitElement {
         border-radius: 8px;
         padding: 5px;
         color: #ffffff;
-        background-color: #ef5956;
+        background-color: #273c75;
         font-weight: 700;
         width: 100%;
       }

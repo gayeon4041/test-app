@@ -7,44 +7,42 @@ export class AddItem extends LitElement {
         display: none;
       }
 
-      form label {
-        display: block;
-      }
-
       form {
         display: flex;
         flex-direction: column;
         align-items: center;
-        border: 3px solid #ed6856;
-        border-radius: 8px;
+        border: 3px solid #7f8fa6;
+        border-radius: 3px;
         padding: 20px;
       }
 
       form label {
-        grid-template-columns: 1fr 2fr;
-        color: #ef5956;
+        color: #353b48;
         font-weight: 700;
       }
 
       form input {
-        border: 1px solid #ef5956;
-        border-radius: 5px;
+        border: 1px solid #7f8fa6;
+        border-radius: 3px;
+        width: 200px;
       }
 
       .create-button {
-        margin-top: 10px;
+        margin-top: 20px;
         border: 0;
         outline: 0;
         color: #ffffff;
-        background-color: #ef5956;
-        padding: 10px;
-        border-radius: 8px;
+        background-color: #273c75;
+        padding: 5px 15px;
+        border-radius: 5px;
         font-weight: 700;
       }
 
       h3 {
-        margin: 5px;
-        color: #ef5956;
+        background-color: #273c75;
+        color: #ffffff;
+        margin-bottom: 0;
+        padding: 1px 5px;
       }
     `
   }
@@ -60,19 +58,17 @@ export class AddItem extends LitElement {
 
   render() {
     return html`
+      <h3>Add ${this.addFormName}</h3>
       <form id="add-form" @submit=${this.addFunction}>
-        <h3>Add ${this.addFormName}</h3>
-        <div>
-          ${this.fields.map(
-            f =>
-              html`
-                <label ?hidden=${!f.display}
-                  >${f.name}:
-                  <input type=${f.type} name=${f.name} .value=${this.defaultValues[f.name] ?? ''} />
-                </label>
-              `
-          )}
-        </div>
+        ${this.fields.map(
+          f =>
+            html`
+              <label ?hidden=${!f.display}
+                >${f.name}:
+                <input type=${f.type} name=${f.name} .value=${this.defaultValues[f.name] ?? ''} />
+              </label>
+            `
+        )}
         <input class="create-button" type="submit" value="create" />
       </form>
     `

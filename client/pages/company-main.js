@@ -13,17 +13,16 @@ import { getUrlInfo } from '../utils/get-url'
 class CompanyMain extends connect(store)(PageView) {
   static get styles() {
     return css`
-      :host {
-        display: flex;
-        flex-direction: column;
-      }
-
       section {
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
+        margin: 20px;
+      }
+
+      test-app-title {
+        margin-bottom: 30px;
       }
 
       ul {
@@ -55,7 +54,7 @@ class CompanyMain extends connect(store)(PageView) {
         outline: 0;
         border-radius: 5px;
         padding: 5px;
-        background-color: #ef5956;
+        background-color: #273c75;
         color: #ffffff;
         font-weight: 700;
         cursor: pointer;
@@ -65,7 +64,7 @@ class CompanyMain extends connect(store)(PageView) {
         width: 500px;
         height: 300px;
         overflow: auto;
-        border: 3px solid #ef5956;
+        border: 3px solid #7f8fa6;
         margin-bottom: 10px;
         border-radius: 5px;
       }
@@ -78,18 +77,19 @@ class CompanyMain extends connect(store)(PageView) {
         border: 0;
         outline: 0;
         background-color: #ffffff;
-        color: #bc6d6d;
+        color: #718093;
         margin: 0;
         padding: 0;
         font-size: 16px;
       }
 
       .table-header span {
-        color: #ef5956;
+        color: #353b48;
         font-weight: 700;
       }
     `
   }
+
   static get properties() {
     return {
       companies: Array,
@@ -98,6 +98,7 @@ class CompanyMain extends connect(store)(PageView) {
       searchName: String
     }
   }
+
   render() {
     const companyFields = [
       {
@@ -124,13 +125,13 @@ class CompanyMain extends connect(store)(PageView) {
           }}
           .searchName=${this.searchName}
         ></search-item>
-        <div class="sort-btn">
-          <button @click=${this.sortFunction} value="toLowerName">이름순으로 정렬하기</button>
-          <button @click=${this.sortFunction} value="createdAt">날짜순으로 정렬하기</button>
-        </div>
         <div class="company-list">
           <ul>
-            <li class="table-header"><span>company</span> <span>date</span> <span>employeesNumber</span></li>
+            <li class="table-header">
+              <span @click=${this.sortFunction} id="toLowerName">company</span>
+              <span @click=${this.sortFunction} id="createdAt">date</span>
+              <span>employeesNumber</span>
+            </li>
             <hr />
             ${this.companies.map(
               company => html`
@@ -157,7 +158,7 @@ class CompanyMain extends connect(store)(PageView) {
               description
             }
             await this.createCompany(parsedNewEmployeeObj)
-            await this.getCompany({})
+            await this.getCompany({ name: this.searchName })
           }}
           addFormName="Company"
         ></add-item>
@@ -169,7 +170,10 @@ class CompanyMain extends connect(store)(PageView) {
     super()
     this.companies = []
     this.searchName = ''
-    this.sortOption = {}
+    this.sortOption = {
+      toLowerName: true,
+      createdAt: true
+    }
   }
 
   updated(changed) {
@@ -186,17 +190,18 @@ class CompanyMain extends connect(store)(PageView) {
   }
 
   sortFunction(e) {
-    let sort = e.target.value
+    let sortName = e.target.id
+    let currentSortOption = {}
 
-    if (!this.sortOption[sort] || this.sortOption[sort] === 'ASC') {
-      this.sortOption = {}
-      this.sortOption[sort] = 'DESC'
+    if (this.sortOption[sortName]) {
+      currentSortOption[sortName] = 'ASC'
+      this.sortOption[sortName] = false
     } else {
-      this.sortOption = {}
-      this.sortOption[sort] = 'ASC'
+      currentSortOption[sortName] = 'DESC'
+      this.sortOption[sortName] = true
     }
 
-    this.getCompany({ name: this.searchName, sort: this.sortOption })
+    this.getCompany({ name: this.searchName, sort: currentSortOption })
   }
 
   changeDate(num) {

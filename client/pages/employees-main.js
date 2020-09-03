@@ -28,7 +28,7 @@ class EmployeesMain extends connect(store)(PageView) {
         list-style: none;
         overflow: auto;
         margin: auto;
-        border: 3px solid #ed6856;
+        border: 3px solid #7f8fa6;
         border-radius: 8px;
         margin-bottom: 20px;
         padding: 20px;
@@ -47,15 +47,24 @@ class EmployeesMain extends connect(store)(PageView) {
         border: 0;
         outline: 0;
         border-radius: 5px;
-        padding: 5px;
+        padding: 5px 15px;
         margin-bottom: 10px;
-        background-color: #ef5956;
+        background-color: #273c75;
         color: #ffffff;
         font-weight: 700;
       }
 
       .select-btns {
         display: flex;
+      }
+
+      .select-cancel-btn {
+        margin-right: 10px;
+        margin-left: 10px;
+      }
+
+      .sort-btn button {
+        background-color: #7f8fa6;
       }
     `
   }
@@ -149,15 +158,13 @@ class EmployeesMain extends connect(store)(PageView) {
             await this.refresh({ companyName: this.companyName, employeesName: searchObj.search })
           }}
         ></search-item>
-        <div class="select-btns">
-          ${this.selectMode
-            ? html` <button @click=${this.selectAllList}>select all</button>
-                <button @click=${this.exitSelectMode}>cancel</button>`
-            : html`<button @click=${this.enterSelectMode}>select</button>`}
-        </div>
         <div class="sort-btn">
-          <button @click=${this.sortFunction} value="name">이름순으로 정렬하기</button>
-          <button @click=${this.sortFunction} value="age">나이순으로 정렬하기</button>
+          ${this.sortOption.name
+            ? html`<button @click=${this.sortFunction} value="name">이름 오름차순</button>`
+            : html`<button @click=${this.sortFunction} value="name">이름 내림차순</button>`}
+          ${this.sortOption.age
+            ? html`<button @click=${this.sortFunction} value="age">나이 오름차순</button>`
+            : html`<button @click=${this.sortFunction} value="age">나이 내림차순</button>`}
         </div>
         <ul>
           ${this.employees.map(
@@ -189,7 +196,13 @@ class EmployeesMain extends connect(store)(PageView) {
             `
           )}
         </ul>
-        <button @click=${this.deleteList}>delete</button>
+        <div class="select-btns">
+          ${this.selectMode
+            ? html` <button @click=${this.selectAllList}>select all</button>
+                <button @click=${this.exitSelectMode} class="select-cancel-btn">cancel</button>
+                <button @click=${this.deleteList}>delete</button>`
+            : html`<button @click=${this.enterSelectMode}>select</button>`}
+        </div>
         <add-item
           .fields=${addFieldOptions}
           .defaultValues=${this.defaultValues}
@@ -221,7 +234,10 @@ class EmployeesMain extends connect(store)(PageView) {
 
     this.companyName = ''
     this.defaultValues = {}
-    this.sortOption = {}
+    this.sortOption = {
+      name: true,
+      age: true
+    }
   }
 
   updated(changed) {
@@ -343,17 +359,18 @@ class EmployeesMain extends connect(store)(PageView) {
   }
 
   sortFunction(e) {
-    let sort = e.target.value
+    let sortName = e.target.value
+    let currentSortOption = {}
 
-    if (!this.sortOption[sort] || this.sortOption[sort] === 'ASC') {
-      this.sortOption = {}
-      this.sortOption[sort] = 'DESC'
+    if (this.sortOption[sortName]) {
+      currentSortOption[sortName] = 'ASC'
+      this.sortOption[sortName] = false
     } else {
-      this.sortOption = {}
-      this.sortOption[sort] = 'ASC'
+      currentSortOption[sortName] = 'DESC'
+      this.sortOption[sortName] = true
     }
 
-    this.refresh({ companyName: this.companyName, employeesName: this.employeesName, sort: this.sortOption })
+    this.refresh({ companyName: this.companyName, employeesName: this.employeesName, sort: currentSortOption })
   }
 
   //graphql 데이터 불러오기

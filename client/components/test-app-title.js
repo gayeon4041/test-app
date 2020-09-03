@@ -4,8 +4,7 @@ export class TestAppTitle extends LitElement {
   static get styles() {
     return css`
       h1 {
-        color: #ef5956;
-        text-align: center;
+        color: #353b48;
       }
     `
   }

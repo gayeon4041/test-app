@@ -19,7 +19,7 @@ export class EditableListItem extends connect(store)(LitElement) {
       }
 
       .listName {
-        color: #ef5956;
+        color: #7f8fa6;
         font-weight: 700;
       }
 
